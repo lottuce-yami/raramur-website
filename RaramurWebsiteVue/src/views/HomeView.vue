@@ -1,9 +1,9 @@
 <script setup>
-
+import ServerName from "@/components/ServerName.vue";
 </script>
 
 <template>
   <main>
-    Raramur: Admire & Create
+    <ServerName />
   </main>
 </template>
