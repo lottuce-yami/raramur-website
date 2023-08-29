@@ -3,7 +3,9 @@ import ServerName from "@/components/ServerName.vue";
 </script>
 
 <template>
-  <main>
-    <ServerName />
-  </main>
+  <ServerName />
 </template>
+
+<style scoped>
+
+</style>

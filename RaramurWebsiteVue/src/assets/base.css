@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Jost:wght@700&family=Play:wght@700&family=Roboto&family=Roboto+Slab&display=swap');
+
 :root {
   --black: #313131;
   --black-soft: #414141;
@@ -7,8 +9,14 @@
   --white-soft: #E4E4E4;
   --white-mute: #D4D4D4;
   
-  --light-accent: #A57D6F;
-  --accent: #FFB7C5;
+  --color-accent: #FF738F;
+  --color-accent-light: #FFB8C6;
+  --color-accent-alt: #A6634B;
+
+  --font-brand: 'Jost', sans-serif;
+  --font-heading: 'Play', sans-serif;
+  --font-main: 'Roboto', sans-serif;
+  --font-alt: 'Roboto Slab', serif;
 }
 
 @media (prefers-color-scheme: dark) or (prefers-color-scheme: no-preference) {
