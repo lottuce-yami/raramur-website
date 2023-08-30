@@ -12,6 +12,9 @@
   --color-accent: #FF738F;
   --color-accent-light: #FFB8C6;
   --color-accent-alt: #A6634B;
+  
+  --color-true: #56BF79;
+  --color-false: #FF7373;
 
   --font-brand: 'Jost', sans-serif;
   --font-heading: 'Play', sans-serif;

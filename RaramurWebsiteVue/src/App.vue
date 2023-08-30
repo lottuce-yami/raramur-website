@@ -1,5 +1,5 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterLink, RouterView } from 'vue-router';
 </script>
 
 <template>
@@ -11,6 +11,9 @@ import { RouterLink, RouterView } from 'vue-router'
       <li>
         <RouterLink to="/history">История</RouterLink>
       </li>
+      <li>
+        <RouterLink to="/status">Статус</RouterLink>
+      </li>
     </menu>
   </header>
   <main>
@@ -20,9 +23,8 @@ import { RouterLink, RouterView } from 'vue-router'
 
 <style scoped>
 header {
-  padding: 1rem;
+  padding: 1rem 8rem;
   font-family: var(--font-heading);
-  backdrop-filter: blur(10px);
 }
 
 header menu {
@@ -33,13 +35,12 @@ header menu {
 }
 
 header a {
+  line-height: 2;
   text-decoration: none;
-  
   color: var(--black-soft);
-  
 }
 
 main {
-  padding: 0 8rem;
+  padding: 2rem 8rem 0;
 }
 </style>

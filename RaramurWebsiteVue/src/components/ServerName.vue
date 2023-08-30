@@ -10,21 +10,23 @@
 </template>
 
 <style scoped>
-  hgroup{
-    line-height: 1;
-    font-family: var(--font-brand);
-  }
-  
-  h1 {
-    font-size: 8rem;
-    text-transform: uppercase;
-    background: linear-gradient(var(--color-accent-light), var(--color-accent));
-    background-clip: text;
-    color: transparent;
-  }
-  
-  h2 {
-    font-size: 4rem;
-    color: var(--color-accent);
-  }
+hgroup{
+  line-height: 1;
+  margin-bottom: 1rem;
+  font-family: var(--font-brand);
+}
+
+h1 {
+  font-size: 8rem;
+  text-transform: uppercase;
+  background: linear-gradient(0deg, var(--color-accent), var(--color-accent-light));
+  background-size: 100%;
+  background-clip: text;
+  color: transparent;
+}
+
+h2 {
+  font-size: 4rem;
+  color: var(--color-accent);
+}
 </style>
