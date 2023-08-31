@@ -9,7 +9,7 @@ axios.get('https://api.mcsrvstat.us/3/raramur.ru').then(response => status.value
 <template>
   <p v-if="status.online">
     <span class="online">&#9679; Онлайн</span>
-    <span>Игроков: <span class="online">{{ status.players.online }}</span> / {{ status.players.max }}</span>
+    <span>Игроков: <span :class="status.players.online > 0 ? 'online' : 'offline'">{{ status.players.online }}</span> / {{ status.players.max }}</span>
     <span>Версия: {{ status.version }}</span>
     <span>IP: raramur.ru</span>
   </p>
@@ -23,7 +23,6 @@ p {
   display: flex;
   gap: 2rem;
   font-family: var(--font-alt);
-  color: var(--black-mute);
 }
 
 .online {
