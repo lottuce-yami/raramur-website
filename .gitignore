@@ -3,9 +3,11 @@
 
 node_modules
 
-bin/
-obj/
-dist/
+bin
+obj
+dist
 
-logs/
+logs
 *.log*
+
+saves
