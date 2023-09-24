@@ -1,18 +1,10 @@
 <script setup>
-import { RouterLink, RouterView } from 'vue-router';
+import { RouterView } from 'vue-router';
+import TheHeader from "@/components/TheHeader.vue";
 </script>
 
 <template>
-  <header>
-    <menu>
-      <li>
-        <RouterLink to="/">Главная</RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/history">История</RouterLink>
-      </li>
-    </menu>
-  </header>
+  <TheHeader/>
   <main>
     <Router-View v-slot="{ Component }">
       <Transition name="fade" mode="out-in">
@@ -31,31 +23,6 @@ import { RouterLink, RouterView } from 'vue-router';
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-}
-
-header {
-  position: fixed;
-  width: 100%;
-  padding: 1rem 8rem;
-  backdrop-filter: blur(10px);
-  font-family: var(--font-heading);
-}
-
-header menu {
-  display: flex;
-  flex-direction: row-reverse;
-  gap: 4rem;
-  list-style: none;
-}
-
-header a {
-  line-height: 2;
-  text-decoration: none;
-  color: var(--black-soft);
-}
-
-header .router-link-active {
-  color: var(--color-accent);
 }
 
 main {
