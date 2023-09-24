@@ -36,9 +36,9 @@ import ServerStatus from "@/components/ServerStatus.vue";
   width: 100%;
   height: 100%;
   z-index: -1;
-  background: url("@/assets/japanese-village.webp") 0 0 / cover no-repeat;
+  background: url("@/assets/images/japanese-village.webp") 0 0 / cover no-repeat;
   filter: blur(2px);
-  -webkit-mask: url("@/assets/about-top-mask.svg") bottom no-repeat, url("@/assets/rectangle.svg");
+  -webkit-mask: url("@/assets/masks/about-top-mask.svg") bottom no-repeat, url("@/assets/masks/rectangle.svg");
   mask-composite: exclude;
   -webkit-mask-composite: xor;
 }
