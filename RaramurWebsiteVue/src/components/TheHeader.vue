@@ -44,11 +44,13 @@ header {
   transition: all 0.5s ease-in-out;
 }
 
+/*noinspection CssUnusedSymbol*/
 header.transparent {
   background-color: transparent;
   backdrop-filter: blur(10);
 }
 
+/*noinspection CssUnusedSymbol*/
 header.scrolled {
   background-color: var(--color-main);
   transition: all 0.5s ease-in-out;
@@ -67,6 +69,7 @@ header a {
   color: var(--black-soft);
 }
 
+/*noinspection CssUnusedSymbol*/
 header .router-link-active {
   color: var(--color-accent);
 }

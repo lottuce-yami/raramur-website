@@ -38,6 +38,7 @@ import ServerStatus from "@/components/ServerStatus.vue";
   z-index: -1;
   background: url("@/assets/images/japanese-village.webp") 0 0 / cover no-repeat;
   filter: blur(2px);
+  /*noinspection CssInvalidPropertyValue*/
   -webkit-mask: url("@/assets/masks/about-top-mask.svg") bottom no-repeat, url("@/assets/masks/rectangle.svg");
   mask-composite: exclude;
   -webkit-mask-composite: xor;
