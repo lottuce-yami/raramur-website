@@ -126,6 +126,18 @@ import 'vueperslides/dist/vueperslides.css';
         </VueperSlides>
       </section>
     </ServerHistory>
+    <ServerHistory name="Raramur Beta" version="b1.7.3" timespan="06.07.21 - 18.07.21" save="raramur_beta_b1.7.3">
+      <section class="chapter">
+        <p class="story">
+          На время этого короткого сезона игроки вернулись к истокам - бета-версии Minecraft. А ведь до релиза 1.0 в
+          игре даже не было дракона! Но никому и не нужна эта навязанная цель, ведь можно построить пиксель-арт Пикачу
+          сразу на спавне, любоваться им и не задумываться о нехватке контента.
+        </p>
+        <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
+          <VueperSlide v-for="i in 2" :image="`/images/history/beta/1_${i}.webp`" :key="i"/>
+        </VueperSlides>
+      </section>
+    </ServerHistory>
     <ServerHistory name="Raramur v3.0" version="1.17.1" timespan="18.07.21 -  29.11.21" save="raramur_v3_1.17.1">
       <section class="chapter">
         <p class="story">
