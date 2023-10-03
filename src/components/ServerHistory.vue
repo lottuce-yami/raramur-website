@@ -1,5 +1,32 @@
 ﻿<script setup>
-defineProps(['name', 'version', 'timespan', 'save']);
+const props = defineProps({
+  /**
+   * Full title of the server.
+   * If nullish, fallbacks to "Raramur".
+   * @example "Raramur Original", "Raramur: Admire & Create"
+   */
+  name: String,
+
+  /**
+   * Minecraft version on which the server was running.
+   * If the save file is present, versions of the save file and the server must match.
+   * If the patch version is unknown, replace it with x.
+   * @example "1.20.2", "1.14.x", "b1.7.3", "22w19a"
+   */
+  version: String,
+
+  /**
+   * Opening and closing date of the server separated by en dash.
+   * @example "01.01.23 – 31.12.23"
+   */
+  timespan: String,
+  
+  /**
+   * Filename of the .zip save file without the extension.
+   * @example "/saves/raramur_ascended_1.19.2.zip" -> "raramur_ascended_1.19.2"
+   */
+  save: String
+});
 </script>
 
 <template>
