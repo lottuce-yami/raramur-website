@@ -22,7 +22,7 @@ import 'vueperslides/dist/vueperslides.css';
           сервера.
         </p>
         <VueperSlides class="images" :slide-ratio="724/657">
-          <VueperSlide image="/images/history/original/1_1.webp" key="1"/>
+          <VueperSlide image="/images/history/original/1_1.webp" :key="1"/>
         </VueperSlides>
       </section>
       <section class="chapter">
@@ -57,7 +57,7 @@ import 'vueperslides/dist/vueperslides.css';
           сталкивании с вершины снеговика.
         </p>
         <VueperSlides class="images" :slide-ratio="1.2">
-          <VueperSlide image="/images/history/realms/1_1.webp" key="1"/>
+          <VueperSlide image="/images/history/realms/1_1.webp" :key="1"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -94,7 +94,7 @@ import 'vueperslides/dist/vueperslides.css';
           других воспоминаний о сервере.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16">
-          <VueperSlide image="/images/history/1.16.2/1_1.webp" key="1"/>
+          <VueperSlide image="/images/history/1.16.2/1_1.webp" :key="1"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -114,7 +114,7 @@ import 'vueperslides/dist/vueperslides.css';
           можно посмотреть на <a href="https://youtu.be/xJyThi4TSxA" target="_blank">YouTube</a>.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16">
-          <VueperSlide image="/images/history/reborn/2_1.webp" key="1"/>
+          <VueperSlide image="/images/history/reborn/2_1.webp" :key="1"/>
         </VueperSlides>
       </section>
       <section class="chapter">
