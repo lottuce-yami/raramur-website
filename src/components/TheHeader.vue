@@ -3,11 +3,10 @@ import {RouterLink, useRoute} from "vue-router";
 import {onMounted, onUnmounted, ref} from "vue";
 
 const route = useRoute();
-const headerRef = ref(null);
+const isScrolled = ref(false);
 
 function scrollListener() {
-  if (scrollY > 0) headerRef.value.classList.add('scrolled');
-  else headerRef.value.classList.remove('scrolled');
+  isScrolled.value = scrollY > 0;
 }
 
 onMounted(() => {
@@ -20,7 +19,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <header ref="headerRef" :class="route.name === 'home' ? 'transparent' : ''">
+  <header :class="{transparent: route.name === 'home', scrolled: isScrolled}">
     <menu>
       <li>
         <RouterLink to="/">Главная</RouterLink>
