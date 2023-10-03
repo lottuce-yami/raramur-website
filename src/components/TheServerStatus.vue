@@ -1,9 +1,22 @@
 ﻿<script setup>
-import { ref, inject } from 'vue';
-const axios = inject('axios');
+import {ref, inject, onMounted, onUnmounted} from 'vue';
 
+const axios = inject('axios');
 const status = ref({});
-axios.get('https://api.mcsrvstat.us/3/raramur.ru').then(response => status.value = response.data);
+let interval;
+
+function updateStatus() {
+  axios.get('https://api.mcsrvstat.us/3/raramur.ru').then(response => status.value = response.data);
+}
+
+onMounted(() => {
+  updateStatus();
+  interval = setInterval(updateStatus, 60000);
+});
+
+onUnmounted(() => {
+  clearInterval(interval);
+});
 </script>
 
 <template>
