@@ -1,5 +1,5 @@
 <script setup>
-import ServerStatus from "@/components/ServerStatus.vue";
+import TheServerStatus from "@/components/TheServerStatus.vue";
 </script>
 
 <template>
@@ -10,7 +10,7 @@ import ServerStatus from "@/components/ServerStatus.vue";
         <h1>Raramur</h1>
         <h2>Admire & Create</h2>
       </hgroup>
-      <ServerStatus/>
+      <TheServerStatus/>
     </article>
     <article class="description">
       <p>
