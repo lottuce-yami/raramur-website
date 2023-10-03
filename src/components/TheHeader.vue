@@ -5,18 +5,17 @@ import {onMounted, onUnmounted, ref} from "vue";
 const route = useRoute();
 const headerRef = ref(null);
 
+function scrollListener() {
+  if (scrollY > 0) headerRef.value.classList.add('scrolled');
+  else headerRef.value.classList.remove('scrolled');
+}
+
 onMounted(() => {
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 0) headerRef.value.classList.add('scrolled');
-    else headerRef.value.classList.remove('scrolled');
-  })
+  addEventListener('scroll', scrollListener)
 });
 
 onUnmounted(() => {
-  window.removeEventListener('scroll', () => {
-    if (window.scrollY > 0) headerRef.value.classList.add('scrolled');
-    else headerRef.value.classList.remove('scrolled');
-  })
+  removeEventListener('scroll', scrollListener)
 });
 </script>
 
