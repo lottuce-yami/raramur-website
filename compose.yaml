@@ -1,5 +1,7 @@
 services:
-  vite:
+  dev-server:
+    profiles:
+      - dev
     build:
       context: .
       target: dev
@@ -8,3 +10,11 @@ services:
     volumes:
       - /app/node_modules
       - ./:/app
+  builder:
+    profiles:
+      - build
+    build:
+      context: .
+      target: build
+    volumes:
+      - ./dist:/app/dist
