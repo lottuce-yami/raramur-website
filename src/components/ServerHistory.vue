@@ -9,7 +9,7 @@ defineProps(['name', 'version', 'timespan', 'save']);
       <p>{{version}}</p>
       <p>{{timespan}}</p>
       <p class="save">
-        <a v-if="save !== undefined" :href="`/saves/${save}.zip`">&#x2713; Сохранение</a>
+        <a v-if="save !== undefined" :href=save>&#x2713; Сохранение</a>
         <template v-else>&#x2717; Сохранение недоступно</template>
       </p>
     </section>
