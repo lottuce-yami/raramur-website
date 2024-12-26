@@ -1,0 +1,17 @@
+.idea
+.vscode
+
+.git
+.gitignore
+
+.dockerignore
+compose.yaml
+Dockerfile
+
+node_modules
+dist
+bin
+obj
+
+LICENSE
+*.md
