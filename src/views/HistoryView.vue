@@ -2,6 +2,8 @@
 import ServerHistory from "@/components/ServerHistory.vue";
 import { VueperSlides, VueperSlide } from 'vueperslides';
 import 'vueperslides/dist/vueperslides.css';
+
+const baseUrl = import.meta.env.BASE_URL
 </script>
 
 <template>
@@ -22,7 +24,7 @@ import 'vueperslides/dist/vueperslides.css';
           сервера.
         </p>
         <VueperSlides class="images" :slide-ratio="724/657">
-          <VueperSlide image="/images/history/original/1_1.webp" key="1"/>
+          <VueperSlide :image="`${baseUrl}/images/history/original/1_1.webp`" key="1"/>
         </VueperSlides>
       </section>
       <section class="chapter">
@@ -33,7 +35,7 @@ import 'vueperslides/dist/vueperslides.css';
           один вариант названия, а сервер уже несколько лет существует под совершенно другим.
         </p>
         <VueperSlides class="images" :slide-ratio="5/5.7" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 2" :image="`/images/history/original/2_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/original/2_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
       <section class="chapter">
@@ -44,7 +46,7 @@ import 'vueperslides/dist/vueperslides.css';
           удалось.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 4" :image="`/images/history/original/3_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 4" :image="`${baseUrl}/images/history/original/3_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -57,7 +59,7 @@ import 'vueperslides/dist/vueperslides.css';
           сталкивании с вершины снеговика.
         </p>
         <VueperSlides class="images" :slide-ratio="1.2">
-          <VueperSlide image="/images/history/realms/1_1.webp" key="1"/>
+          <VueperSlide :image="`${baseUrl}/images/history/realms/1_1.webp`" key="1"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -70,7 +72,7 @@ import 'vueperslides/dist/vueperslides.css';
           экспонат - шалкер, которого Антошка доставил прямиком из Энда (что очень непросто, зная способности Антошки).
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 8" :image="`/images/history/v2.0/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 8" :image="`${baseUrl}/images/history/v2.0/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -82,7 +84,7 @@ import 'vueperslides/dist/vueperslides.css';
           выглядят достроенными.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 6" :image="`/images/history/v2.5/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 6" :image="`${baseUrl}/images/history/v2.5/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -94,7 +96,7 @@ import 'vueperslides/dist/vueperslides.css';
           других воспоминаний о сервере.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16">
-          <VueperSlide image="/images/history/1.16.2/1_1.webp" key="1"/>
+          <VueperSlide :image="`${baseUrl}/images/history/1.16.2/1_1.webp`" key="1"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -105,7 +107,7 @@ import 'vueperslides/dist/vueperslides.css';
           напоминал деревню. В городе были библиотека, банк, офис компании СКД, ресторан, супермаркет.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 9" :image="`/images/history/reborn/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 9" :image="`${baseUrl}/images/history/reborn/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
       <section class="chapter">
@@ -114,7 +116,7 @@ import 'vueperslides/dist/vueperslides.css';
           можно посмотреть на <a href="https://youtu.be/xJyThi4TSxA" target="_blank">YouTube</a>.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16">
-          <VueperSlide image="/images/history/reborn/2_1.webp" key="1"/>
+          <VueperSlide :image="`${baseUrl}/images/history/reborn/2_1.webp`" key="1"/>
         </VueperSlides>
       </section>
       <section class="chapter">
@@ -122,7 +124,7 @@ import 'vueperslides/dist/vueperslides.css';
           Специально для этого сервера были разработаны датапак и ресурпак, которые добавляли в игру монеты и банкоматы.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide class="no-cover" v-for="i in 4" :image="`/images/history/reborn/3_${i}.webp`" :key="i"/>
+          <VueperSlide class="no-cover" v-for="i in 4" :image="`${baseUrl}/images/history/reborn/3_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -134,7 +136,7 @@ import 'vueperslides/dist/vueperslides.css';
           сразу на спавне, любоваться им и не задумываться о нехватке контента.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 2" :image="`/images/history/beta/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/beta/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -147,7 +149,7 @@ import 'vueperslides/dist/vueperslides.css';
           коллайдер (по плану внутри должна была крутиться жаба), уютный спавн с магазином и обустроенной набережной.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 7" :image="`/images/history/v3.0/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 7" :image="`${baseUrl}/images/history/v3.0/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -161,7 +163,7 @@ import 'vueperslides/dist/vueperslides.css';
           арт-объектов.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 5" :image="`/images/history/ascended/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 5" :image="`${baseUrl}/images/history/ascended/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
       <section class="chapter">
@@ -171,7 +173,7 @@ import 'vueperslides/dist/vueperslides.css';
           продвигал его и привлекал как можно больше участников.
         </p>
         <VueperSlides class="images" :slide-ratio="10/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 4" :image="`/images/history/ascended/2_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 4" :image="`${baseUrl}/images/history/ascended/2_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -184,7 +186,7 @@ import 'vueperslides/dist/vueperslides.css';
           датапаками, сильно отличается от игры в ограниченном пространстве - в данном случае, в банках.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 2" :image="`/images/history/in-a-jar/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/in-a-jar/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -197,7 +199,7 @@ import 'vueperslides/dist/vueperslides.css';
           ставить перед собой цель пройти какой-нибудь модпак.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 5" :image="`/images/history/all-of-fabric-6/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 5" :image="`${baseUrl}/images/history/all-of-fabric-6/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
@@ -207,7 +209,7 @@ import 'vueperslides/dist/vueperslides.css';
           По факту однодневный сервер на карте в стиле игры Raft, "комната ожидания" следующего сезона.
         </p>
         <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-          <VueperSlide v-for="i in 2" :image="`/images/history/raft/1_${i}.webp`" :key="i"/>
+          <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/raft/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
