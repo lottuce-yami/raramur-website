@@ -63,7 +63,8 @@ const baseUrl = import.meta.env.BASE_URL
         </VueperSlides>
       </section>
     </ServerHistory>
-    <ServerHistory name="Raramur v2.0" version="1.15.2" timespan="11.12.19 – 04.04.20" save="https://drive.google.com/file/d/1ywkVHE7sMr_Y_bnTCLZG0BEfhda8yo11/view">
+    <ServerHistory name="Raramur v2.0" version="1.15.2" timespan="11.12.19 – 04.04.20"
+                   save="https://drive.google.com/file/d/1ywkVHE7sMr_Y_bnTCLZG0BEfhda8yo11/view">
       <section class="chapter">
         <p class="story">
           Тот самый сервер, где наконец-то был собран миллион пшеницы! Посмотреть видео об этом непростом челлендже
@@ -76,7 +77,8 @@ const baseUrl = import.meta.env.BASE_URL
         </VueperSlides>
       </section>
     </ServerHistory>
-    <ServerHistory name="Raramur v2.5" version="1.16.1" timespan="23.06.20 – 21.08.20" save="https://drive.google.com/file/d/1Lgnfw__pxpTiIshnTnNbyP8FeMjefMm4/view">
+    <ServerHistory name="Raramur v2.5" version="1.16.1" timespan="23.06.20 – 21.08.20"
+                   save="https://drive.google.com/file/d/1Lgnfw__pxpTiIshnTnNbyP8FeMjefMm4/view">
       <section class="chapter">
         <p class="story">
           Непопулярный среди активных игроков сервер, из примечательного только проекты Антошки: Stride Racing и дом в
@@ -100,7 +102,8 @@ const baseUrl = import.meta.env.BASE_URL
         </VueperSlides>
       </section>
     </ServerHistory>
-    <ServerHistory name="Raramur Reborn" version="1.16.5" timespan="11.01.21 – 03.07.21" save="https://drive.google.com/file/d/1Cw435wKXqRNnU2Il9qltDk9g9ZutBaxS/view">
+    <ServerHistory name="Raramur Reborn" version="1.16.5" timespan="11.01.21 – 03.07.21"
+                   save="https://drive.google.com/file/d/1Cw435wKXqRNnU2Il9qltDk9g9ZutBaxS/view">
       <section class="chapter">
         <p class="story">
           Второй по культовости Рарамур. Практически все игроки объединились на одном проекте: городе, который скорее
@@ -128,7 +131,8 @@ const baseUrl = import.meta.env.BASE_URL
         </VueperSlides>
       </section>
     </ServerHistory>
-    <ServerHistory name="Raramur Beta" version="b1.7.3" timespan="06.07.21 – 18.07.21" save="https://drive.google.com/file/d/1BvEUPwNrcpljBUFGgB8O2SU7cOhrSZYT/view">
+    <ServerHistory name="Raramur Beta" version="b1.7.3" timespan="06.07.21 – 18.07.21"
+                   save="https://drive.google.com/file/d/1BvEUPwNrcpljBUFGgB8O2SU7cOhrSZYT/view">
       <section class="chapter">
         <p class="story">
           На время этого короткого сезона игроки вернулись к истокам — бета-версии Minecraft. А ведь до релиза 1.0 в
@@ -140,7 +144,8 @@ const baseUrl = import.meta.env.BASE_URL
         </VueperSlides>
       </section>
     </ServerHistory>
-    <ServerHistory name="Raramur v3.0" version="1.17.1" timespan="18.07.21 –  29.11.21" save="https://drive.google.com/file/d/1OrEjpVOrjZkt6i3FCqJOQHTP1pBJu1FO/view">
+    <ServerHistory name="Raramur v3.0" version="1.17.1" timespan="18.07.21 –  29.11.21"
+                   save="https://drive.google.com/file/d/1OrEjpVOrjZkt6i3FCqJOQHTP1pBJu1FO/view">
       <section class="chapter">
         <p class="story">
           Сервер без отображения координат и, на первое время, без Энда. Интересный факт: хотя ориентироваться в
@@ -203,7 +208,8 @@ const baseUrl = import.meta.env.BASE_URL
         </VueperSlides>
       </section>
     </ServerHistory>
-    <ServerHistory name="Raramur Raft" version="1.17.1" timespan="26.08.23 – 31.08.23" save="https://drive.google.com/file/d/1IqDLNbGg2EDsFnWkNrER0vOZHWylvsuI/view">
+    <ServerHistory name="Raramur Raft" version="1.17.1" timespan="26.08.23 – 31.08.23"
+                   save="https://drive.google.com/file/d/1IqDLNbGg2EDsFnWkNrER0vOZHWylvsuI/view">
       <section class="chapter">
         <p class="story">
           По факту однодневный сервер на карте в стиле игры Raft, “комната ожидания” следующего сезона.
