@@ -50,12 +50,10 @@ onUnmounted(() => {
   font-family: var(--font-alt);
 }
 
-/*noinspection CssUnusedSymbol*/
 .server-status-online, .server-status-players-online {
   color: var(--color-true);
 }
 
-/*noinspection CssUnusedSymbol*/
 .server-status-offline, .server-status-players-offline {
   color: var(--color-false);
 }

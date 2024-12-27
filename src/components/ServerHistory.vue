@@ -69,21 +69,18 @@ const props = defineProps({
   text-decoration: underline solid;
 }
 
-/*noinspection CssUnusedSymbol*/
 :slotted(.chapter) {
   display: flex;
   gap: 2rem;
   margin: .5rem 0;
 }
 
-/*noinspection CssUnusedSymbol*/
 :slotted(.story) {
   flex: 1;
   text-align: justify;
   font-size: 1.25rem;
 }
 
-/*noinspection CssUnusedSymbol*/
 :slotted(.images) {
   flex: 1;
   padding: 0;

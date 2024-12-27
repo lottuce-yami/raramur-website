@@ -65,7 +65,6 @@ onUnmounted(() => {
   color: var(--black-soft);
 }
 
-/*noinspection CssUnusedSymbol*/
 .router-link-active {
   color: var(--color-accent);
 }

@@ -15,13 +15,11 @@ import TheHeader from "@/components/TheHeader.vue";
 </template>
 
 <style scoped>
-/*noinspection CssUnusedSymbol*/
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s ease;
 }
 
-/*noinspection CssUnusedSymbol*/
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
