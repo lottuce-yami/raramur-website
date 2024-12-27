@@ -5,7 +5,7 @@ import TheHeader from "@/components/TheHeader.vue";
 
 <template>
   <TheHeader/>
-  <main>
+  <main class="page">
     <Router-View v-slot="{ Component }">
       <Transition name="fade" mode="out-in">
         <Component :is="Component"/>
@@ -27,7 +27,7 @@ import TheHeader from "@/components/TheHeader.vue";
   opacity: 0;
 }
 
-main {
+.page {
   padding: 4rem 8rem 0;
 }
 </style>

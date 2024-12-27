@@ -20,29 +20,43 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <p v-if="status.online">
-    <span class="online">&#9679; Онлайн</span>
-    <span>Игроков: <span :class="status.players.online > 0 ? 'online' : 'offline'">{{status.players.online}}</span> / {{status.players.max}}</span>
-    <span>Версия: {{status.version}}</span>
-    <span>IP: raramur.ru</span>
+  <p class="server-status">
+    <template v-if="status.online">
+      <span class="server-status-online">&#9679; Онлайн</span>
+      <span class="server-status-players">
+        Игроков: 
+        <span :class="status.players.online > 0 ? 'server-status-players-online' : 'server-status-players-offline'">
+          {{ status.players.online }}
+        </span>
+        / {{ status.players.max }}
+      </span>
+      <span class="server-status-version">Версия: {{ status.version }}</span>
+    </template>
+    <template v-if="!status.online">
+      <span class="server-status-offline">&#9632; Оффлайн</span>
+    </template>
+    <span class="server-status-ip">IP: raramur.ru</span>
   </p>
-  <p v-else>
-    <span class="offline">&#9632; Оффлайн</span>
+  <!--TODO spinner-->
+  <p class="server-status-loading">
+    …
   </p>
 </template>
 
 <style scoped>
-p {
+.server-status {
   display: flex;
   gap: 2rem;
   font-family: var(--font-alt);
 }
 
-.online {
+/*noinspection CssUnusedSymbol*/
+.server-status-online, .server-status-players-online {
   color: var(--color-true);
 }
 
-.offline {
+/*noinspection CssUnusedSymbol*/
+.server-status-offline, .server-status-players-offline {
   color: var(--color-false);
 }
 </style>

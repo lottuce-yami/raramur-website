@@ -30,42 +30,42 @@ const props = defineProps({
 </script>
 
 <template>
-  <article>
-    <h2>{{name ?? 'Raramur'}}</h2>
-    <section class="meta">
-      <p>{{version}}</p>
-      <p>{{timespan}}</p>
-      <p class="save">
-        <a v-if="save !== undefined" :href="`/saves/${save}.zip`">&#x2713; Сохранение</a>
+  <article class="server-entry">
+    <h2 class="server-entry-heading">{{ name ?? 'Raramur' }}</h2>
+    <section class="server-entry-meta">
+      <span class="server-entry-version">{{ version }}</span>
+      <span class="server-entry-timespan">{{ timespan }}</span>
+      <span class="server-entry-save">
+        <a v-if="save !== undefined" :href="`/saves/${save}.zip`" class="server-entry-save-link">&#x2713; Сохранение</a>
         <template v-else>&#x2717; Сохранение недоступно</template>
-      </p>
+      </span>
     </section>
-    <section>
-      <slot></slot>
+    <section class="server-entry-content">
+      <slot/>
     </section>
   </article>
 </template>
 
 <style scoped>
-h2, .meta {
+.server-entry-heading, .server-entry-meta {
   font-family: var(--font-alt);
 }
 
-.meta {
+.server-entry-meta {
   display: flex;
   gap: 1rem;
   font-size: 1.1rem;
 }
 
-.save {
+.server-entry-save {
   color: var(--color-false);
 }
 
-.save a {
+.server-entry-save-link {
   color: var(--color-true);
   text-decoration: underline dotted;
 }
-.save a:hover {
+.server-entry-save-link:hover {
   text-decoration: underline solid;
 }
 

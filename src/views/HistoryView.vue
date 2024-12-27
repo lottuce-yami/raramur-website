@@ -5,8 +5,8 @@ import 'vueperslides/dist/vueperslides.css';
 </script>
 
 <template>
-  <div>
-    <h1>История Рарамура</h1>
+  <div class="content">
+    <h1 class="page-heading">История Рарамура</h1>
     <p class="contribute">
       Вы можете помочь с наполнением этой страницы! Присылайте свои истории, скриншоты (или хотя бы фотографии
       монитора…), догадки, сообщения или посты с упоминанием Рарамура и всё остальное, что может оказаться полезным в
@@ -215,12 +215,12 @@ import 'vueperslides/dist/vueperslides.css';
 </template>
 
 <style scoped>
-div {
+.content {
   background-color: var(--color-main);
   padding: 0 2rem;
 }
 
-h1 {
+.page-heading {
   font-family: var(--font-heading);
   line-height: 1.5;
 }
