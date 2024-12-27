@@ -36,7 +36,7 @@ const props = defineProps({
       <span class="server-entry-version">{{ version }}</span>
       <span class="server-entry-timespan">{{ timespan }}</span>
       <span class="server-entry-save">
-        <a v-if="save !== undefined" :href="`/saves/${save}.zip`" class="server-entry-save-link">&#x2713; Сохранение</a>
+        <a v-if="save !== undefined" :href=save class="server-entry-save-link">&#x2713; Сохранение</a>
         <template v-else>&#x2717; Сохранение недоступно</template>
       </span>
     </section>

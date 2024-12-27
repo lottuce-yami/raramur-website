@@ -1,0 +1,20 @@
+services:
+  dev-server:
+    profiles:
+      - dev
+    build:
+      context: .
+      target: dev
+    ports:
+      - 5173:5173
+    volumes:
+      - /app/node_modules
+      - ./:/app
+  builder:
+    profiles:
+      - build
+    build:
+      context: .
+      target: build
+    volumes:
+      - ./dist:/app/dist
