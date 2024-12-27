@@ -1,62 +1,86 @@
 ﻿<script setup>
-defineProps(['name', 'version', 'timespan', 'save']);
+const props = defineProps({
+  /**
+   * Full title of the server.
+   * If nullish, fallbacks to "Raramur".
+   * @example "Raramur Original", "Raramur: Admire & Create"
+   */
+  name: String,
+
+  /**
+   * Minecraft version on which the server was running.
+   * If the save file is present, versions of the save file and the server must match.
+   * If the patch version is unknown, replace it with x.
+   * @example "1.20.2", "1.14.x", "b1.7.3", "22w19a"
+   */
+  version: String,
+
+  /**
+   * Opening and closing date of the server separated by en dash.
+   * @example "01.01.23 – 31.12.23"
+   */
+  timespan: String,
+  
+  /**
+   * Link to the save file.
+   * @example "https://example.com/raramur_example_1.21.4.zip"
+   */
+  save: String
+});
 </script>
 
 <template>
-  <article>
-    <h2>{{name ?? 'Raramur'}}</h2>
-    <section class="meta">
-      <p>{{version}}</p>
-      <p>{{timespan}}</p>
-      <p class="save">
-        <a v-if="save !== undefined" :href=save>&#x2713; Сохранение</a>
+  <article class="server-entry">
+    <h2 class="server-entry-heading">{{ name ?? 'Raramur' }}</h2>
+    <section class="server-entry-meta">
+      <span class="server-entry-version">{{ version }}</span>
+      <span class="server-entry-timespan">{{ timespan }}</span>
+      <span class="server-entry-save">
+        <a v-if="save !== undefined" :href=save class="server-entry-save-link">&#x2713; Сохранение</a>
         <template v-else>&#x2717; Сохранение недоступно</template>
-      </p>
+      </span>
     </section>
-    <section>
-      <slot></slot>
+    <section class="server-entry-content">
+      <slot/>
     </section>
   </article>
 </template>
 
 <style scoped>
-h2, .meta {
+.server-entry-heading, .server-entry-meta {
   font-family: var(--font-alt);
 }
 
-.meta {
+.server-entry-meta {
   display: flex;
   gap: 1rem;
   font-size: 1.1rem;
 }
 
-.save {
+.server-entry-save {
   color: var(--color-false);
 }
 
-.save a {
+.server-entry-save-link {
   color: var(--color-true);
   text-decoration: underline dotted;
 }
-.save a:hover {
+.server-entry-save-link:hover {
   text-decoration: underline solid;
 }
 
-/*noinspection CssUnusedSymbol*/
 :slotted(.chapter) {
   display: flex;
   gap: 2rem;
   margin: .5rem 0;
 }
 
-/*noinspection CssUnusedSymbol*/
 :slotted(.story) {
   flex: 1;
   text-align: justify;
   font-size: 1.25rem;
 }
 
-/*noinspection CssUnusedSymbol*/
 :slotted(.images) {
   flex: 1;
   padding: 0;

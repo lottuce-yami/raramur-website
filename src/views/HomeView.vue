@@ -1,5 +1,5 @@
 <script setup>
-import ServerStatus from "@/components/ServerStatus.vue";
+import TheServerStatus from "@/components/TheServerStatus.vue";
 </script>
 
 <template>
@@ -10,15 +10,13 @@ import ServerStatus from "@/components/ServerStatus.vue";
         <h1>Raramur</h1>
         <h2>Admire & Create</h2>
       </hgroup>
-      <ServerStatus/>
+      <TheServerStatus/>
     </article>
     <article class="description">
       <p>
-        <strong>Рарамур</strong> - это приватный Minecraft-сервер с сезонным форматом игры.
-        Длительность сезона всегда разная,
-        а темы ничем не ограничены - это может быть как ванильное выживание,
-        так и какая-нибудь приключенческая карта или сборка с модами.
-        Но главная черта Рарамура - его обитатели: еноты, рыбы и даже спидранеры...
+        <strong>Рарамур</strong> — это приватный Minecraft-сервер с сезонным форматом игры. Длительность сезона всегда
+        разная, а темы ничем не ограничены — это может быть как ванильное выживание, так и приключенческая карта или 
+        сборка с модами. Но отличительная черта Рарамура — его обитатели: еноты, рыбы, спидранеры и даже стримеры…
       </p>
     </article>
   </div>
@@ -38,7 +36,6 @@ import ServerStatus from "@/components/ServerStatus.vue";
   z-index: -1;
   background: url("@/assets/images/japanese-village.webp") 0 0 / cover no-repeat;
   filter: blur(2px);
-  /*noinspection CssInvalidPropertyValue*/
   -webkit-mask: url("@/assets/masks/about-top-mask.svg") bottom no-repeat, url("@/assets/masks/rectangle.svg");
   mask-composite: exclude;
   -webkit-mask-composite: xor;
