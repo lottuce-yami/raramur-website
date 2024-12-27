@@ -24,11 +24,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- TODO spinner -->
   <p v-if="loading" class="server-status-loading">
-    …
+    <span class="loader"></span>
   </p>
-  <p v-else class="server-status">
+  <p v-if="!loading" class="server-status">
     <template v-if="status.online">
       <span class="server-status-online">&#9679; Онлайн</span>
       <span class="server-status-players">
@@ -61,4 +60,24 @@ onUnmounted(() => {
 .server-status-offline, .server-status-players-offline {
   color: var(--color-false);
 }
+
+.loader {
+  width: 2rem;
+  height: 2rem;
+  border: .33rem solid var(--color-accent);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+0% {
+  transform: rotate(0deg);
+}
+100% {
+  transform: rotate(360deg);
+}
+} 
 </style>
