@@ -3,10 +3,14 @@ import {ref, inject, onMounted, onUnmounted} from 'vue';
 
 const axios = inject('axios');
 const status = ref({});
+const loading = ref(true)
 let interval;
 
 function updateStatus() {
-  axios.get('https://api.mcsrvstat.us/3/raramur.ru').then(response => status.value = response.data);
+  loading.value = true
+  axios.get('https://api.mcsrvstat.us/3/raramur.ru')
+    .then(response => status.value = response.data)
+    .finally(() => loading.value = false)
 }
 
 onMounted(() => {
@@ -20,7 +24,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <p class="server-status">
+  <!-- TODO spinner -->
+  <p v-if="loading" class="server-status-loading">
+    …
+  </p>
+  <p v-else class="server-status">
     <template v-if="status.online">
       <span class="server-status-online">&#9679; Онлайн</span>
       <span class="server-status-players">
@@ -36,10 +44,6 @@ onUnmounted(() => {
       <span class="server-status-offline">&#9632; Оффлайн</span>
     </template>
     <span class="server-status-ip">IP: raramur.ru</span>
-  </p>
-  <!--TODO spinner-->
-  <p class="server-status-loading">
-    …
   </p>
 </template>
 
