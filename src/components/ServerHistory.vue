@@ -22,8 +22,8 @@ const props = defineProps({
   timespan: String,
   
   /**
-   * Filename of the .zip save file without the extension.
-   * @example "/saves/raramur_ascended_1.19.2.zip" -> "raramur_ascended_1.19.2"
+   * Link to the save file.
+   * @example "https://example.com/raramur_example_1.21.4.zip"
    */
   save: String
 });
