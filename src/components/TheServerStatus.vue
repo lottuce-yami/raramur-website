@@ -40,7 +40,7 @@ onUnmounted(() => {
       <span class="server-status-version">Версия: {{ status.version }}</span>
     </template>
     <template v-if="!status.online">
-      <span class="server-status-offline">&#9632; Оффлайн</span>
+      <span class="server-status-offline">&#9632; Офлайн</span>
     </template>
     <span class="server-status-ip">IP: raramur.ru</span>
   </p>
