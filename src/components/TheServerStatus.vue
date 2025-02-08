@@ -8,7 +8,7 @@ let interval;
 
 function updateStatus() {
   loading.value = true
-  axios.get('https://api.mcsrvstat.us/3/raramur.ru')
+  axios.get('https://api.mcsrvstat.us/3/lottuce.moe')
     .then(response => status.value = response.data)
     .finally(() => loading.value = false)
 }
@@ -42,7 +42,7 @@ onUnmounted(() => {
     <template v-if="!status.online">
       <span class="server-status-offline">&#9632; Офлайн</span>
     </template>
-    <span class="server-status-ip">IP: raramur.ru</span>
+    <span class="server-status-ip">IP: lottuce.moe</span>
   </p>
 </template>
 

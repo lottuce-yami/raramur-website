@@ -58,8 +58,8 @@ const baseUrl = import.meta.env.BASE_URL
           стал огромный снеговик Олаф, построенный Антошкой с помощью других игроков — в сборе ресурсов и постоянном
           сталкивании с вершины снеговика.
         </p>
-        <VueperSlides class="images" :slide-ratio="1.2">
-          <VueperSlide :image="`${baseUrl}/images/history/realms/1_1.webp`" :key="1"/>
+        <VueperSlides class="images" :slide-ratio="1.5">
+          <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/realms/1_${i}.webp`" :key="i"/>
         </VueperSlides>
       </section>
     </ServerHistory>
