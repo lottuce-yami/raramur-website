@@ -8,7 +8,6 @@ import TheServerStatus from "@/components/TheServerStatus.vue";
       <div class="background"></div>
       <hgroup class="server-name">
         <h1>Raramur</h1>
-        <h2>Admire & Create</h2>
       </hgroup>
       <TheServerStatus/>
     </article>
