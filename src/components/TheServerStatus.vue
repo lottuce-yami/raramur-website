@@ -8,7 +8,7 @@ let interval;
 
 function updateStatus() {
   loading.value = true
-  axios.get('https://api.mcsrvstat.us/3/lottuce.moe')
+  axios.get('https://api.mcsrvstat.us/3/raramur.lottuce.moe')
     .then(response => status.value = response.data)
     .finally(() => loading.value = false)
 }
