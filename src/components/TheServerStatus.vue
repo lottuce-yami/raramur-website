@@ -42,7 +42,7 @@ onUnmounted(() => {
     <template v-if="!status.online">
       <span class="server-status-offline">&#9632; Офлайн</span>
     </template>
-    <span class="server-status-ip">IP: lottuce.moe</span>
+    <span class="server-status-ip">IP: raramur.lottuce.moe</span>
   </p>
 </template>
 
