@@ -5,10 +5,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync-namemc": "node scripts/sync-namemc.mjs"
   },
   "dependencies": {
     "axios": "^1.5.0",
+    "skinview3d": "^3.4.2",
     "vue": "^3.3.4",
     "vue-axios": "^3.5.2",
     "vue-router": "^4.2.4",

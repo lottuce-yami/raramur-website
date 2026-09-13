@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import {RouterLink, useRoute} from "vue-router";
 import {onMounted, onUnmounted, ref} from "vue";
 
@@ -27,6 +27,9 @@ onUnmounted(() => {
       <li class="header-menu-item">
         <RouterLink class="header-link" to="/history">История</RouterLink>
       </li>
+      <li class="header-menu-item">
+        <RouterLink class="header-link" to="/players">Игроки</RouterLink>
+      </li>
     </menu>
   </header>
 </template>
@@ -44,7 +47,7 @@ onUnmounted(() => {
 
 .header-transparent {
   background-color: transparent;
-  backdrop-filter: blur(10);
+  backdrop-filter: blur(10px);
 }
 
 .header-scrolled {
@@ -54,7 +57,7 @@ onUnmounted(() => {
 
 .header-menu {
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: flex-end;
   gap: 4rem;
   list-style: none;
 }
