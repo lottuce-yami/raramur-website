@@ -1,12 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import ServerHistory from "@/components/ServerHistory.vue";
-import { VueperSlides, VueperSlide } from 'vueperslides';
-import 'vueperslides/dist/vueperslides.css';
+import HistoryGallery from "@/components/HistoryGallery.vue";
 
-const baseUrl = import.meta.env.BASE_URL;
-
-// Active Lightbox Image
 const activeImage = ref(null);
 
 function openImage(url) {
@@ -30,33 +26,12 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeyDown);
 });
-
-// Interactive Filter
-const selectedFilter = ref('all');
-
-function isServerVisible(year, hasSave) {
-  if (selectedFilter.value === 'all') return true;
-  if (selectedFilter.value === 'saves') return hasSave;
-  return selectedFilter.value === year;
-}
-
-function isYearMarkerVisible(year) {
-  if (selectedFilter.value === 'all') return true;
-  if (selectedFilter.value === year) return true;
-  if (selectedFilter.value === 'saves') {
-    // All eras currently have at least one server with a save file except if none match
-    if (year === '2019') return true; // v2.0
-    if (year === '2020') return true; // v2.5
-    if (year === '2021') return true; // reborn, beta, v3.0, ascended
-    if (year === '2023') return true; // in-a-jar, all-of-fabric-6, raft
-  }
-  return false;
-}
 </script>
 
 <template>
   <div class="content">
     <header class="page-header">
+      <p class="page-eyebrow">Архив сезонов</p>
       <h1 class="page-heading">История Рарамура</h1>
       <div class="contribute">
         <p>
@@ -67,56 +42,19 @@ function isYearMarkerVisible(year) {
           href="https://github.com/lottuce-yami/raramur-website" target="_blank" rel="noopener">lottuce-yami/raramur-website</a>.
         </p>
       </div>
-
-      <!-- Interactive Timeline Filter Bar -->
-      <nav class="filter-bar" aria-label="Фильтры хронологии">
-        <button 
-          class="filter-pill" 
-          :class="{ active: selectedFilter === 'all' }"
-          @click="selectedFilter = 'all'"
-        >
-          Все сезоны <span class="filter-count">12</span>
-        </button>
-        <button 
-          v-for="yr in ['2019', '2020', '2021', '2023']"
-          :key="yr"
-          class="filter-pill"
-          :class="{ active: selectedFilter === yr }"
-          @click="selectedFilter = yr"
-        >
-          {{ yr }}
-          <span class="filter-count">
-            {{ yr === '2019' ? 3 : yr === '2020' ? 2 : yr === '2021' ? 4 : 3 }}
-          </span>
-        </button>
-        <button 
-          class="filter-pill filter-pill-saves" 
-          :class="{ active: selectedFilter === 'saves' }"
-          @click="selectedFilter = 'saves'"
-        >
-          <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          С сохранением <span class="filter-count">9</span>
-        </button>
-      </nav>
     </header>
 
-    <!-- Timeline Container with Continuous Vertical Spine -->
     <div class="timeline-wrapper">
       <div class="timeline-spine" aria-hidden="true"></div>
 
       <!-- 2019 ERA -->
-      <div v-show="isYearMarkerVisible('2019')" class="year-marker">
+      <div class="year-marker">
         <span class="year-badge">2019</span>
       </div>
 
-      <ServerHistory 
-        v-show="isServerVisible('2019', false)"
-        name="Raramur Original" 
-        version="1.14.3" 
+      <ServerHistory
+        name="Raramur Original"
+        version="1.14.3"
         timespan="01.07.19 – 21.11.19"
       >
         <section class="chapter">
@@ -125,9 +63,7 @@ function isYearMarkerVisible(year) {
             подписчиков, но спустя уже пару дней в группе ВКонтакте появился пост с объявлением конкурса на название
             сервера.
           </p>
-          <VueperSlides class="images contain-image" :slide-ratio="9/16" :touchable="false">
-            <VueperSlide :image="`${baseUrl}/images/history/original/1_1.webp`" :key="1" @click="openImage(`${baseUrl}/images/history/original/1_1.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="original" :chapter="1" :count="1" @open="openImage" />
         </section>
         <section class="chapter">
           <p class="story">
@@ -136,9 +72,7 @@ function isYearMarkerVisible(year) {
             играет на сервере, а не всех участников группы. Таким образом получилась смешная ситуация — в опросе выиграл
             один вариант названия, а сервер уже несколько лет существует под совершенно другим.
           </p>
-          <VueperSlides class="images contain-image" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/original/2_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/original/2_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="original" :chapter="2" :count="2" @open="openImage" />
         </section>
         <section class="chapter">
           <p class="story">
@@ -147,16 +81,13 @@ function isYearMarkerVisible(year) {
             глобальных, но запоминающихся объектов. К сожалению, сохранение сервера и большинство скриншотов найти не
             удалось.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 4" :image="`${baseUrl}/images/history/original/3_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/original/3_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="original" :chapter="3" :count="4" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2019', false)"
-        name="Raramur Realms" 
-        version="1.14.x" 
+      <ServerHistory
+        name="Raramur Realms"
+        version="1.14.x"
         timespan="26.11.19 – 09.12.19"
       >
         <section class="chapter">
@@ -166,16 +97,13 @@ function isYearMarkerVisible(year) {
             стал огромный снеговик Олаф, построенный Антошкой с помощью других игроков — в сборе ресурсов и постоянном
             сталкивании с вершины снеговика.
           </p>
-          <VueperSlides class="images contain-image" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/realms/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/realms/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="realms" :chapter="1" :count="2" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2019', true)"
-        name="Raramur v2.0" 
-        version="1.15.2" 
+      <ServerHistory
+        name="Raramur v2.0"
+        version="1.15.2"
         timespan="11.12.19 – 04.04.20"
         save="https://drive.google.com/file/d/1ywkVHE7sMr_Y_bnTCLZG0BEfhda8yo11/view"
       >
@@ -186,21 +114,18 @@ function isYearMarkerVisible(year) {
             Windows 7, Шкаф и, конечно же, пчёлки — всё-таки обновление 1.15. На нулевых координатах есть интересный
             экспонат — шалкер, которого Антошка доставил прямиком из Энда (что очень непросто, зная способности Антошки).
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 8" :image="`${baseUrl}/images/history/v2.0/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/v2.0/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="v2.0" :chapter="1" :count="8" @open="openImage" />
         </section>
       </ServerHistory>
 
       <!-- 2020 ERA -->
-      <div v-show="isYearMarkerVisible('2020')" class="year-marker">
+      <div class="year-marker">
         <span class="year-badge">2020</span>
       </div>
 
-      <ServerHistory 
-        v-show="isServerVisible('2020', true)"
-        name="Raramur v2.5" 
-        version="1.16.1" 
+      <ServerHistory
+        name="Raramur v2.5"
+        version="1.16.1"
         timespan="23.06.20 – 21.08.20"
         save="https://drive.google.com/file/d/1Lgnfw__pxpTiIshnTnNbyP8FeMjefMm4/view"
       >
@@ -210,15 +135,12 @@ function isYearMarkerVisible(year) {
             аду. Если полетать по серверу, можно наткнуться на несколько довольно красивых баз, но большинство из них не
             выглядят достроенными.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 6" :image="`${baseUrl}/images/history/v2.5/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/v2.5/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="v2.5" :chapter="1" :count="6" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2020', false)"
-        version="1.16.2" 
+      <ServerHistory
+        version="1.16.2"
         timespan="26.08.20 – 01.10.20"
       >
         <section class="chapter">
@@ -227,21 +149,18 @@ function isYearMarkerVisible(year) {
             разработан сайт, который сохранился в памяти — как человеческой, так и компьютерной, — в отличие от каких-либо
             других воспоминаний о сервере.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" :touchable="false">
-            <VueperSlide :image="`${baseUrl}/images/history/1.16.2/1_1.webp`" :key="1" @click="openImage(`${baseUrl}/images/history/1.16.2/1_1.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="1.16.2" :chapter="1" :count="1" @open="openImage" />
         </section>
       </ServerHistory>
 
       <!-- 2021 ERA -->
-      <div v-show="isYearMarkerVisible('2021')" class="year-marker">
+      <div class="year-marker">
         <span class="year-badge">2021</span>
       </div>
 
-      <ServerHistory 
-        v-show="isServerVisible('2021', true)"
-        name="Raramur Reborn" 
-        version="1.16.5" 
+      <ServerHistory
+        name="Raramur Reborn"
+        version="1.16.5"
         timespan="11.01.21 – 03.07.21"
         save="https://drive.google.com/file/d/1Cw435wKXqRNnU2Il9qltDk9g9ZutBaxS/view"
       >
@@ -250,33 +169,26 @@ function isYearMarkerVisible(year) {
             Второй по культовости Рарамур. Практически все игроки объединились на одном проекте: городе, который скорее
             напоминал деревню. В городе были библиотека, банк, офис компании СКД, ресторан, супермаркет.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 9" :image="`${baseUrl}/images/history/reborn/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/reborn/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="reborn" :chapter="1" :count="9" @open="openImage" />
         </section>
         <section class="chapter">
           <p class="story">
             Ярким событием стал праздник на площади с конкурсом чашек, мини-концертом и фейерверками. Видео с фейерверками
             можно посмотреть на <a href="https://youtu.be/xJyThi4TSxA" target="_blank" rel="noopener">YouTube</a>.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" :touchable="false">
-            <VueperSlide :image="`${baseUrl}/images/history/reborn/2_1.webp`" :key="1" @click="openImage(`${baseUrl}/images/history/reborn/2_1.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="reborn" :chapter="2" :count="1" @open="openImage" />
         </section>
         <section class="chapter">
           <p class="story">
             Специально для этого сервера были разработаны датапак и ресурпак, которые добавляли в игру монеты и банкоматы.
           </p>
-          <VueperSlides class="images contain-image" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 4" :image="`${baseUrl}/images/history/reborn/3_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/reborn/3_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="reborn" :chapter="3" :count="4" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2021', true)"
-        name="Raramur Beta" 
-        version="b1.7.3" 
+      <ServerHistory
+        name="Raramur Beta"
+        version="b1.7.3"
         timespan="06.07.21 – 18.07.21"
         save="https://drive.google.com/file/d/1BvEUPwNrcpljBUFGgB8O2SU7cOhrSZYT/view"
       >
@@ -286,16 +198,13 @@ function isYearMarkerVisible(year) {
             игре даже не было дракона! Но никому и не нужна эта навязанная цель, ведь можно построить пиксель-арт Пикачу
             сразу на спавне, любоваться им и не задумываться о нехватке контента.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/beta/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/beta/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="beta" :chapter="1" :count="2" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2021', true)"
-        name="Raramur v3.0" 
-        version="1.17.1" 
+      <ServerHistory
+        name="Raramur v3.0"
+        version="1.17.1"
         timespan="18.07.21 –  29.11.21"
         save="https://drive.google.com/file/d/1OrEjpVOrjZkt6i3FCqJOQHTP1pBJu1FO/view"
       >
@@ -306,16 +215,13 @@ function isYearMarkerVisible(year) {
             совместного города в прошлом сезоне… На этом сервере были построены такие проекты как Raramurlend, адронный
             коллайдер (по плану внутри должна была крутиться жаба), уютный спавн с магазином и обустроенной набережной.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 7" :image="`${baseUrl}/images/history/v3.0/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/v3.0/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="v3.0" :chapter="1" :count="7" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2021', true)"
-        name="Raramur Ascended" 
-        version="1.19.2" 
+      <ServerHistory
+        name="Raramur Ascended"
+        version="1.19.2"
         timespan="10.12.21 – 08.01.23"
         save="https://drive.google.com/file/d/1tcYn-V9r62yBbsb7x-kcwichvXr-7-8G/view"
       >
@@ -326,9 +232,7 @@ function isYearMarkerVisible(year) {
             горы на спавне. Однако городом данную общину назвать трудно — это больше походило на выставку скульптур и
             арт-объектов.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 5" :image="`${baseUrl}/images/history/ascended/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/ascended/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="ascended" :chapter="1" :count="5" @open="openImage" />
         </section>
         <section class="chapter">
           <p class="story">
@@ -336,21 +240,18 @@ function isYearMarkerVisible(year) {
             “Тайный Санта”. В этом ивенте поучаствовали практически все игроки — всё благодаря Антошке, который активно
             продвигал его и привлекал как можно больше участников.
           </p>
-          <VueperSlides class="images contain-image" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 4" :image="`${baseUrl}/images/history/ascended/2_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/ascended/2_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="ascended" :chapter="2" :count="4" @open="openImage" />
         </section>
       </ServerHistory>
 
       <!-- 2023 ERA -->
-      <div v-show="isYearMarkerVisible('2023')" class="year-marker">
+      <div class="year-marker">
         <span class="year-badge">2023</span>
       </div>
 
-      <ServerHistory 
-        v-show="isServerVisible('2023', true)"
-        name="Raramur In a Jar" 
-        version="1.18.2" 
+      <ServerHistory
+        name="Raramur In a Jar"
+        version="1.18.2"
         timespan="08.01.23 – 20.01.23"
         save="https://drive.google.com/file/d/1sGlGqS7y5WUwLqSmsOUNnHVFjjlnMQ9_/view"
       >
@@ -360,16 +261,13 @@ function isYearMarkerVisible(year) {
             на себе настоящий эксперимент. Всё-таки игра в полноценном мире, хоть и с необычными правилами или даже
             датапаками, сильно отличается от игры в ограниченном пространстве — в данном случае, в банках.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/in-a-jar/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/in-a-jar/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="in-a-jar" :chapter="1" :count="2" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2023', true)"
-        name="Raramur: All of Fabric 6" 
-        version="1.19.2" 
+      <ServerHistory
+        name="Raramur: All of Fabric 6"
+        version="1.19.2"
         timespan="13.02.23 – 26.04.23"
         save="https://drive.google.com/file/d/1SiUW87frO1eVw-P6TyOOOi8UBqHKCMU7/view"
       >
@@ -379,16 +277,13 @@ function isYearMarkerVisible(year) {
             новые перспективы для сервера. Теперь сезоны могут не только поощрять креатив игроков в ванильной игре, но и
             ставить перед собой цель пройти какой-нибудь модпак.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 5" :image="`${baseUrl}/images/history/all-of-fabric-6/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/all-of-fabric-6/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="all-of-fabric-6" :chapter="1" :count="5" @open="openImage" />
         </section>
       </ServerHistory>
 
-      <ServerHistory 
-        v-show="isServerVisible('2023', true)"
-        name="Raramur Raft" 
-        version="1.17.1" 
+      <ServerHistory
+        name="Raramur Raft"
+        version="1.17.1"
         timespan="26.08.23 – 31.08.23"
         save="https://drive.google.com/file/d/1IqDLNbGg2EDsFnWkNrER0vOZHWylvsuI/view"
       >
@@ -396,20 +291,17 @@ function isYearMarkerVisible(year) {
           <p class="story">
             По факту однодневный сервер на карте в стиле игры Raft, “комната ожидания” следующего сезона.
           </p>
-          <VueperSlides class="images" :slide-ratio="9/16" autoplay duration="10000" :touchable="false">
-            <VueperSlide v-for="i in 2" :image="`${baseUrl}/images/history/raft/1_${i}.webp`" :key="i" @click="openImage(`${baseUrl}/images/history/raft/1_${i}.webp`)"/>
-          </VueperSlides>
+          <HistoryGallery folder="raft" :chapter="1" :count="2" @open="openImage" />
         </section>
       </ServerHistory>
     </div>
 
-    <!-- Fullscreen Image Lightbox Modal -->
     <Teleport to="body">
       <Transition name="lightbox-fade">
         <div v-if="activeImage" class="lightbox-overlay" @click="closeImage">
           <div class="lightbox-container" @click.stop>
             <button class="lightbox-close-btn" aria-label="Закрыть" @click="closeImage">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
               </svg>
@@ -424,37 +316,53 @@ function isYearMarkerVisible(year) {
 
 <style scoped>
 .content {
-  background-color: var(--color-main);
-  max-width: 1240px;
+  background-color: transparent;
+  max-width: 1180px;
   margin: 0 auto;
-  padding: 2.5rem 2rem 6rem;
+  padding: 2.75rem 2rem 6rem;
 }
 
 .page-header {
-  margin-bottom: 2.5rem;
+  margin-bottom: 2.75rem;
+}
+
+.page-eyebrow {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.65rem;
 }
 
 .page-heading {
   font-family: var(--font-heading);
   font-size: 2.75rem;
   font-weight: 700;
-  line-height: 1.2;
-  color: var(--color-contrast);
-  margin-bottom: 1.25rem;
+  line-height: 1.15;
+  margin-bottom: 1.35rem;
   letter-spacing: -0.02em;
+  background: linear-gradient(0deg, var(--color-accent), var(--color-accent-alt));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .contribute {
   padding: 1.25rem 1.75rem;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.78);
   border-left: 4px solid var(--color-accent);
-  border-radius: 0 12px 12px 0;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+  border-radius: 0 14px 14px 0;
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.035);
   font-size: 1.05rem;
   line-height: 1.65;
   color: var(--black-soft);
   max-width: 980px;
-  margin-bottom: 2rem;
+  margin-bottom: 0;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .contribute a {
@@ -462,7 +370,7 @@ function isYearMarkerVisible(year) {
   font-weight: 600;
   text-decoration: none;
   border-bottom: 1px solid var(--color-accent-light);
-  transition: all 0.2s ease;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
 }
 
 .contribute a:hover {
@@ -470,70 +378,6 @@ function isYearMarkerVisible(year) {
   border-bottom-color: var(--color-accent);
 }
 
-/* Filter Navigation Bar */
-.filter-bar {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.65rem;
-  padding: 0.5rem 0;
-}
-
-.filter-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 1.05rem;
-  background: rgba(255, 255, 255, 0.75);
-  border: 1px solid rgba(0, 0, 0, 0.09);
-  border-radius: 9999px;
-  font-family: var(--font-main);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--black-soft);
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  backdrop-filter: blur(8px);
-  user-select: none;
-}
-
-.filter-pill:hover {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(255, 115, 143, 0.35);
-  color: var(--color-contrast);
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-}
-
-.filter-pill.active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #ffffff;
-  box-shadow: 0 4px 14px rgba(255, 115, 143, 0.35);
-}
-
-.filter-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.1rem 0.5rem;
-  border-radius: 9999px;
-  background: rgba(0, 0, 0, 0.07);
-  color: inherit;
-}
-
-.filter-pill.active .filter-count {
-  background: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
-}
-
-.filter-pill-saves svg {
-  flex-shrink: 0;
-}
-
-/* Timeline Container & Rail */
 .timeline-wrapper {
   position: relative;
   padding-left: 48px;
@@ -548,13 +392,12 @@ function isYearMarkerVisible(year) {
   background: linear-gradient(
     to bottom,
     var(--color-accent) 0%,
-    var(--color-accent-light) 50%,
-    rgba(255, 115, 143, 0.2) 100%
+    var(--color-accent-light) 45%,
+    rgba(255, 115, 143, 0.18) 100%
   );
   border-radius: 999px;
 }
 
-/* Year Milestone Markers */
 .year-marker {
   position: relative;
   margin: 3.25rem 0 2.25rem;
@@ -563,7 +406,7 @@ function isYearMarkerVisible(year) {
 }
 
 .year-marker:first-of-type {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .year-badge {
@@ -583,7 +426,6 @@ function isYearMarkerVisible(year) {
   z-index: 3;
 }
 
-/* Lightbox Modal Styles */
 .lightbox-overlay {
   position: fixed;
   inset: 0;
@@ -617,10 +459,11 @@ function isYearMarkerVisible(year) {
 
 .lightbox-close-btn {
   position: absolute;
-  top: -2.85rem;
-  right: 0;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+  background: rgba(20, 20, 20, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.45);
   color: #ffffff;
   border-radius: 50%;
   width: 2.25rem;
@@ -629,12 +472,17 @@ function isYearMarkerVisible(year) {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .lightbox-close-btn:hover {
   background: rgba(255, 255, 255, 0.3);
   transform: scale(1.1);
+}
+
+.lightbox-close-btn:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
 }
 
 .lightbox-fade-enter-active,
@@ -645,52 +493,38 @@ function isYearMarkerVisible(year) {
 .lightbox-fade-enter-from,
 .lightbox-fade-leave-to {
   opacity: 0;
-  transform: scale(0.98);
 }
 
 @media (max-width: 768px) {
   .content {
-    padding: 1.5rem 1.25rem 4rem;
+    padding: 1.75rem 1.15rem 4rem;
   }
-  
+
   .page-heading {
     font-size: 2.15rem;
   }
-  
+
   .contribute {
-    padding: 1rem 1.25rem;
+    padding: 1rem 1.15rem;
     font-size: 0.98rem;
   }
-  
+
   .timeline-wrapper {
     padding-left: 32px;
   }
-  
+
   .timeline-spine {
     left: 7px;
   }
-  
+
   .year-badge {
     left: -32px;
     font-size: 0.95rem;
     padding: 0.3rem 1rem;
   }
-  
-  .filter-bar {
-    gap: 0.45rem;
-  }
-  
-  .filter-pill {
-    padding: 0.35rem 0.8rem;
-    font-size: 0.85rem;
-  }
-  
+
   .lightbox-overlay {
     padding: 1rem;
-  }
-  
-  .lightbox-close-btn {
-    top: -2.5rem;
   }
 }
 </style>
