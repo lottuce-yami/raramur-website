@@ -3,7 +3,7 @@ import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import whitelist from '../../whitelist.json';
 import { getInitialPlayerData, resolvePlayerData } from '@/services/playerService';
 import PlayerSkinViewer from '@/components/PlayerSkinViewer.vue';
-import LocatorCube from '@/components/LocatorCube.vue';
+import LocatorMark from '@/components/LocatorMark.vue';
 
 // Initialize reactive list of players from whitelist usernames
 const players = reactive(
@@ -86,9 +86,9 @@ onBeforeUnmount(() => {
           />
         </div>
 
-        <!-- Under it: Username with luminescent square in color of locator bar mark -->
+        <!-- Under it: Username with the official Minecraft locator bar mark -->
         <div class="username-row">
-          <LocatorCube :color="player.locatorColor" :size="12" />
+          <LocatorMark :color="player.locatorColor" :size="32" />
           <span
             class="player-username"
             @click="copyUsername(player.username)"
@@ -185,18 +185,18 @@ onBeforeUnmount(() => {
   margin-bottom: 0.75rem;
 }
 
-/* Under the Skin Box: Username row with luminescent square */
+/* Under the Skin Box: Username row with the locator mark */
 .username-row {
   display: flex;
   align-items: center;
-  gap: 9px;
-  min-height: 26px;
+  gap: 12px;
+  min-height: 40px;
   padding: 0.15rem 0.25rem;
 }
 
 .player-username {
   font-family: var(--font-heading);
-  font-size: 1.15rem;
+  font-size: 1.4rem;
   font-weight: 700;
   line-height: 1;
   color: var(--black);
@@ -208,7 +208,7 @@ onBeforeUnmount(() => {
   user-select: none;
   display: inline-flex;
   align-items: center;
-  margin-top: 1px;
+  margin-top: 2px;
   transition: color 0.15s ease;
 }
 
@@ -221,14 +221,15 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: center;
   color: var(--color-true);
-  margin-left: 2px;
+  margin-left: 4px;
+  margin-top: 2px;
   flex-shrink: 0;
   line-height: 1;
 }
 
 .check-svg {
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
 }
 
 .fade-check-enter-active,
