@@ -127,13 +127,12 @@ defineProps({
   border-radius: 20px;
   padding: 2rem 2.35rem;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.035), 0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .timeline-card:hover {
   border-color: rgba(255, 115, 143, 0.32);
   box-shadow: 0 14px 36px rgba(255, 115, 143, 0.09), 0 2px 6px rgba(0, 0, 0, 0.035);
-  transform: translateY(-2px);
 }
 
 .card-header {
