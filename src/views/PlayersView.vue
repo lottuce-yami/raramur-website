@@ -62,11 +62,6 @@ onBeforeUnmount(() => {
   <div class="content">
     <div class="header-section">
       <h1 class="page-heading">Вайтлист Рарамура</h1>
-      <p class="subtitle">
-        На сервере <strong>Рарамур</strong> действует система вайтлиста, объединяющая проверенных игроков в общее сообщество. 
-        У каждого игрока есть персональная метка на компасе-локаторе со своим уникальным цветом, 
-        благодаря чему товарищей легко распознать на горизонте даже без включённых координат.
-      </p>
     </div>
 
     <!-- Players Grid -->
@@ -144,20 +139,6 @@ onBeforeUnmount(() => {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
-}
-
-.subtitle {
-  width: 75%;
-  max-width: 900px;
-  font-size: 1.15rem;
-  line-height: 1.6;
-  font-style: italic;
-  color: var(--black-soft);
-  text-align: justify;
-}
-
-.subtitle strong {
-  color: var(--color-accent-alt);
 }
 
 /* Players Grid */
@@ -250,9 +231,6 @@ onBeforeUnmount(() => {
   }
   .page-heading {
     font-size: 2.2rem;
-  }
-  .subtitle {
-    width: 100%;
   }
   .players-grid {
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
