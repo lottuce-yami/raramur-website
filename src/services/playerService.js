@@ -1,62 +1,113 @@
 /**
- * Service to resolve player Minecraft UUIDs, skins, and NameMC locator-bar colors.
+ * Service to resolve player Minecraft UUIDs, skins, and locator-bar colors.
+ *
+ * Locator colors match Java Edition / NameMC: UUID.hashCode() low 24 bits as
+ * RGB, then HSV brightness pinned to 0.9 (230/255).
  */
-
-// NameMC profile data, kept in sync via `npm run sync-namemc` (scripts/sync-namemc.mjs).
-import NAMEMC_DATABASE from '../data/namemc-cache.json';
 
 const playerCache = new Map();
 
 /**
- * Deterministic hash algorithm for string/username.
+ * Java's UUID.hashCode(): fold most/least significant bits into a 32-bit int.
  */
-function hashString(str) {
-  let hash = 0;
-  for (let i = 0; i < str.length; i++) {
-    hash = (hash << 5) - hash + str.charCodeAt(i);
-    hash |= 0;
+function javaUuidHashCode(uuid) {
+  const hex = uuid.replace(/-/g, '');
+  const msbHi = parseInt(hex.slice(0, 8), 16) | 0;
+  const msbLo = parseInt(hex.slice(8, 16), 16) | 0;
+  const lsbHi = parseInt(hex.slice(16, 24), 16) | 0;
+  const lsbLo = parseInt(hex.slice(24, 32), 16) | 0;
+  return (msbHi ^ lsbHi ^ msbLo ^ lsbLo) | 0;
+}
+
+/** Same math as java.awt.Color.RGBtoHSB. */
+function javaRgbToHsb(r, g, b) {
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const brightness = max / 255;
+  const s = max === 0 ? 0 : (max - min) / max;
+  let h = 0;
+  if (s !== 0) {
+    const delta = max - min;
+    if (r === max) h = (g - b) / delta;
+    else if (g === max) h = 2 + (b - r) / delta;
+    else h = 4 + (r - g) / delta;
+    h /= 6;
+    if (h < 0) h += 1;
   }
-  return Math.abs(hash);
+  return [h, s, brightness];
+}
+
+/** Same math as java.awt.Color.HSBtoRGB. */
+function javaHsbToRgb(h, s, brightness) {
+  let r = 0;
+  let g = 0;
+  let b = 0;
+  if (s === 0) {
+    r = g = b = Math.floor(brightness * 255 + 0.5);
+  } else {
+    const h6 = (h - Math.floor(h)) * 6;
+    const f = h6 - Math.floor(h6);
+    const p = brightness * (1 - s);
+    const q = brightness * (1 - s * f);
+    const t = brightness * (1 - s * (1 - f));
+    switch (Math.floor(h6)) {
+      case 0:
+        r = brightness; g = t; b = p;
+        break;
+      case 1:
+        r = q; g = brightness; b = p;
+        break;
+      case 2:
+        r = p; g = brightness; b = t;
+        break;
+      case 3:
+        r = p; g = q; b = brightness;
+        break;
+      case 4:
+        r = t; g = p; b = brightness;
+        break;
+      case 5:
+        r = brightness; g = p; b = q;
+        break;
+    }
+    r = Math.floor(r * 255 + 0.5);
+    g = Math.floor(g * 255 + 0.5);
+    b = Math.floor(b * 255 + 0.5);
+  }
+  return [r, g, b];
 }
 
 /**
- * Generates an HSV-based hex color matching NameMC's locator-bar palette:
- * - V (brightness) = 230 / 255 (~0.90) so max channel is 0xE6
- * - S (saturation) = 0.55 - 0.95
- * - H (hue) = 0 - 360 degrees
+ * Locator-bar color for a Java Edition UUID (NameMC / vanilla).
+ * Falls back to a stable username-derived tint when no UUID is available yet.
  */
 export function generateNameMCColor(seedString) {
-  const hash = hashString(seedString);
-  const hue = (hash % 3600) / 10;
-  const saturation = 0.55 + ((hash >> 8) % 40) / 100;
-  const value = 230 / 255; // 0.90196
-
-  // HSV to RGB conversion
-  const c = value * saturation;
-  const x = c * (1 - Math.abs(((hue / 60) % 2) - 1));
-  const m = value - c;
-
-  let r = 0, g = 0, b = 0;
-  if (hue < 60) {
-    r = c; g = x; b = 0;
-  } else if (hue < 120) {
-    r = x; g = c; b = 0;
-  } else if (hue < 180) {
-    r = 0; g = c; b = x;
-  } else if (hue < 240) {
-    r = 0; g = x; b = c;
-  } else if (hue < 300) {
-    r = x; g = 0; b = c;
+  const looksLikeUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seedString);
+  let r;
+  let g;
+  let b;
+  if (looksLikeUuid) {
+    const hash = javaUuidHashCode(seedString);
+    r = (hash >> 16) & 0xff;
+    g = (hash >> 8) & 0xff;
+    b = hash & 0xff;
   } else {
-    r = c; g = 0; b = x;
+    // Temporary stand-in until UUID resolves; not NameMC-accurate.
+    let hash = 0;
+    for (let i = 0; i < seedString.length; i++) {
+      hash = (hash << 5) - hash + seedString.charCodeAt(i);
+      hash |= 0;
+    }
+    hash = Math.abs(hash);
+    r = (hash >> 16) & 0xff;
+    g = (hash >> 8) & 0xff;
+    b = hash & 0xff;
   }
 
-  const toHex = (n) => {
-    const hex = Math.round((n + m) * 255).toString(16).toUpperCase();
-    return hex.padStart(2, '0');
-  };
-
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  const [h, s] = javaRgbToHsb(r, g, b);
+  const [nr, ng, nb] = javaHsbToRgb(h, s, 0.9);
+  const toHex = (n) => n.toString(16).toUpperCase().padStart(2, '0');
+  return `#${toHex(nr)}${toHex(ng)}${toHex(nb)}`;
 }
 
 /**
@@ -67,14 +118,13 @@ export function getInitialPlayerData(username) {
     return playerCache.get(username);
   }
 
-  const known = NAMEMC_DATABASE[username];
   const initial = {
     username,
-    uuid: known?.uuid || null,
-    locatorColor: known?.locatorColor || generateNameMCColor(username),
+    uuid: null,
+    locatorColor: generateNameMCColor(username),
     skinUrl: `https://mc-heads.net/skin/${encodeURIComponent(username)}`,
     namemcUrl: `https://namemc.com/profile/${encodeURIComponent(username)}`,
-    loaded: Boolean(known)
+    loaded: false
   };
 
   playerCache.set(username, initial);
@@ -82,7 +132,7 @@ export function getInitialPlayerData(username) {
 }
 
 /**
- * Asynchronously resolves player UUID and ensures locator color is accurate.
+ * Asynchronously resolves player UUID and recomputes the accurate locator color.
  */
 export async function resolvePlayerData(username) {
   const existing = getInitialPlayerData(username);
@@ -97,11 +147,12 @@ export async function resolvePlayerData(username) {
       const data = await res.json();
       if (data.code === 'player.found' && data.data?.player) {
         const player = data.data.player;
+        const uuid = player.id;
         const resolved = {
           ...existing,
-          uuid: player.id,
+          uuid,
           skinUrl: player.skin_texture || existing.skinUrl,
-          locatorColor: existing.locatorColor || generateNameMCColor(player.id || username),
+          locatorColor: uuid ? generateNameMCColor(uuid) : existing.locatorColor,
           loaded: true
         };
         playerCache.set(username, resolved);
