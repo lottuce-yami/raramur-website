@@ -31,7 +31,6 @@ onUnmounted(() => {
 <template>
   <div class="content">
     <header class="page-header">
-      <p class="page-eyebrow">Архив сезонов</p>
       <h1 class="page-heading">История Рарамура</h1>
       <div class="contribute">
         <p>
