@@ -528,9 +528,9 @@ onUnmounted(() => {
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 600px) {
   .content {
-    padding: 1.35rem 0.75rem 3.5rem;
+    padding: 1.35rem 0.6rem 3.5rem;
   }
 
   .page-heading {
@@ -543,15 +543,29 @@ onUnmounted(() => {
   }
 
   .timeline-wrapper {
-    padding-left: 24px;
+    padding-left: 0;
   }
 
   .timeline-spine {
-    left: 5px;
+    display: none;
+  }
+
+  .year-marker {
+    gap: 0.75rem;
+    margin: 2.5rem 0 1.75rem;
+  }
+
+  .year-marker::before,
+  .year-marker::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 115, 143, 0.25);
+    border-radius: 999px;
   }
 
   .year-badge {
-    left: -24px;
+    left: 0;
     font-size: 0.85rem;
     padding: 0.25rem 0.85rem;
   }

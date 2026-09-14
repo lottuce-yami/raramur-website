@@ -54,6 +54,17 @@ onUnmounted(() => {
   font-family: var(--font-alt);
 }
 
+@media (max-width: 768px) {
+  .server-status {
+    justify-content: center;
+  }
+
+  .server-status-loading {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 .server-status-online, .server-status-players-online {
   color: var(--color-true);
 }

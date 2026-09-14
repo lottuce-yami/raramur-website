@@ -33,10 +33,13 @@ function revealOnce(el, callback) {
     revealObserver?.unobserve(el);
   };
 }
+
+const COARSE_POINTER_QUERY = '(hover: none) and (pointer: coarse)';
+const TAP_MOVE_THRESHOLD = 6;
 </script>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import {
   lendStageTo,
   renderPoster,
@@ -65,17 +68,44 @@ const props = defineProps({
   }
 });
 
+const skinBoxRef = ref(null);
 const canvasHostRef = ref(null);
 const isLoading = ref(true);
 const isLive = ref(false);
 const isRotating = ref(false);
+const isTouchUi = ref(false);
 
 const posterUrl = ref(null);
 
 let stageToken = null;
 let posterRequest = 0;
-let hovering = false;
+let wantsLive = false;
+let touchPinned = false;
 let stopReveal = null;
+let mediaQuery = null;
+
+let tapTracking = null;
+
+const hintLabel = computed(() => {
+  if (!isTouchUi.value) return '3D';
+  if (isLive.value) return 'Вращайте';
+  return 'Нажмите для 3D';
+});
+
+const boxTitle = computed(() => {
+  if (isTouchUi.value) {
+    return isLive.value
+      ? 'Проведите пальцем для вращения. Нажмите ещё раз — выход.'
+      : 'Нажмите, чтобы вращать скин в 3D.';
+  }
+  return 'Потяните для вращения в 3D. Двойной клик — сброс ракурса.';
+});
+
+function syncTouchUi() {
+  const coarsePointer = Boolean(mediaQuery?.matches);
+  const hasTouchPoints = typeof navigator !== 'undefined' && navigator.maxTouchPoints > 0;
+  isTouchUi.value = coarsePointer || hasTouchPoints;
+}
 
 async function loadPoster() {
   const request = ++posterRequest;
@@ -86,6 +116,16 @@ async function loadPoster() {
 
   posterUrl.value = url;
   isLoading.value = false;
+}
+
+function handleEvict() {
+  // Another card claimed the shared stage; drop local live state without
+  // calling returnStage (the new borrower already owns the canvas).
+  stageToken = null;
+  wantsLive = false;
+  touchPinned = false;
+  isLive.value = false;
+  isRotating.value = false;
 }
 
 async function goLive() {
@@ -99,14 +139,15 @@ async function goLive() {
     },
     onRotateEnd: () => {
       isRotating.value = false;
-      if (!hovering) goStatic();
-    }
+      if (!wantsLive) goStatic();
+    },
+    onEvict: handleEvict
   });
 
   if (!token) return;
 
   // The pointer may have moved on while the texture was still downloading.
-  if (!hovering) {
+  if (!wantsLive) {
     returnStage(token);
     return;
   }
@@ -118,23 +159,78 @@ async function goLive() {
 // The poster always holds the canonical pose, so handing the canvas back is all
 // it takes for the card to snap out of whatever angle the user left it at.
 function goStatic() {
-  if (!stageToken) return;
+  if (!stageToken) {
+    wantsLive = false;
+    touchPinned = false;
+    isLive.value = false;
+    isRotating.value = false;
+    return;
+  }
 
   returnStage(stageToken);
   stageToken = null;
+  wantsLive = false;
+  touchPinned = false;
   isLive.value = false;
   isRotating.value = false;
 }
 
-function onPointerEnter() {
-  hovering = true;
+function onPointerEnter(event) {
+  if (event.pointerType !== 'mouse') return;
+  wantsLive = true;
   goLive();
 }
 
-function onPointerLeave() {
-  hovering = false;
+function onPointerLeave(event) {
+  if (event.pointerType !== 'mouse') return;
+  wantsLive = false;
   // Releasing mid-drag would cancel the rotation; goStatic runs on rotate end.
   if (isRotating.value) return;
+  goStatic();
+}
+
+function onPointerDown(event) {
+  if (event.pointerType === 'mouse') return;
+
+  tapTracking = {
+    pointerId: event.pointerId,
+    x: event.clientX,
+    y: event.clientY,
+    moved: false,
+    wasLive: isLive.value
+  };
+
+  if (!isLive.value) {
+    wantsLive = true;
+    touchPinned = true;
+    goLive();
+  }
+}
+
+function onPointerMove(event) {
+  if (!tapTracking || tapTracking.pointerId !== event.pointerId) return;
+  const dx = event.clientX - tapTracking.x;
+  const dy = event.clientY - tapTracking.y;
+  if (Math.hypot(dx, dy) > TAP_MOVE_THRESHOLD) {
+    tapTracking.moved = true;
+  }
+}
+
+function onPointerUp(event) {
+  if (!tapTracking || tapTracking.pointerId !== event.pointerId) return;
+  const { moved, wasLive } = tapTracking;
+  tapTracking = null;
+
+  // Tap on an already-live card (no meaningful drag) toggles 3D off.
+  if (wasLive && !moved && !isRotating.value) {
+    goStatic();
+  }
+}
+
+function onDocumentPointerDown(event) {
+  if (!touchPinned || !isLive.value) return;
+  const box = skinBoxRef.value;
+  if (box && box.contains(event.target)) return;
   goStatic();
 }
 
@@ -145,10 +241,18 @@ function resetPose() {
 onMounted(() => {
   retainStage();
   stopReveal = revealOnce(canvasHostRef.value, loadPoster);
+
+  mediaQuery = window.matchMedia(COARSE_POINTER_QUERY);
+  syncTouchUi();
+  mediaQuery.addEventListener('change', syncTouchUi);
+
+  document.addEventListener('pointerdown', onDocumentPointerDown, true);
 });
 
 onBeforeUnmount(() => {
   stopReveal?.();
+  document.removeEventListener('pointerdown', onDocumentPointerDown, true);
+  mediaQuery?.removeEventListener('change', syncTouchUi);
   if (stageToken) returnStage(stageToken);
   stageToken = null;
   releaseStage();
@@ -159,8 +263,13 @@ watch(
   () => {
     loadPoster();
     if (stageToken) {
+      const keepLive = wantsLive;
       goStatic();
-      if (hovering) goLive();
+      if (keepLive) {
+        wantsLive = true;
+        touchPinned = isTouchUi.value;
+        goLive();
+      }
     }
   }
 );
@@ -168,10 +277,12 @@ watch(
 
 <template>
   <div
+    ref="skinBoxRef"
     class="skin-box"
+    :class="{ 'is-live': isLive }"
     :style="{ '--locator-glow': locatorColor }"
+    :title="boxTitle"
     @dblclick="resetPose"
-    title="Потяните для вращения в 3D. Двойной клик — сброс ракурса."
   >
     <!-- Top Bar with NameMC link & Reset Button -->
     <div class="skin-box-header">
@@ -202,12 +313,16 @@ watch(
       </button>
     </div>
 
-    <!-- Static render, swapped for the shared 3D canvas while hovered -->
+    <!-- Static render, swapped for the shared 3D canvas while hovered / tapped -->
     <div
       ref="canvasHostRef"
       class="canvas-container"
       @pointerenter="onPointerEnter"
       @pointerleave="onPointerLeave"
+      @pointerdown="onPointerDown"
+      @pointermove="onPointerMove"
+      @pointerup="onPointerUp"
+      @pointercancel="onPointerUp"
     >
       <div v-if="isLoading" class="skin-loading">
         <div class="skin-spinner"></div>
@@ -229,12 +344,12 @@ watch(
     </div>
 
     <!-- Rotate Hint Badge -->
-    <div class="rotate-hint" :class="{ 'is-active': isRotating }">
+    <div class="rotate-hint" :class="{ 'is-active': isRotating, 'is-touch': isTouchUi }">
       <svg class="rotate-icon" viewBox="0 0 16 16" fill="currentColor">
         <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-7.068 2H.534a.25.25 0 0 1-.192-.41l1.966-2.36a.25.25 0 0 1 .384 0l1.966 2.36a.25.25 0 0 1-.192.41z"/>
         <path fill-rule="evenodd" d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6 6 0 1 1 2.05 8.5a.5.5 0 0 1 .99-.153A5 5 0 1 0 8 3z"/>
       </svg>
-      <span>3D</span>
+      <span>{{ hintLabel }}</span>
     </div>
   </div>
 </template>
@@ -251,6 +366,13 @@ watch(
   box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9),
               0 2px 6px rgba(0, 0, 0, 0.02);
   user-select: none;
+}
+
+.skin-box.is-live {
+  border-color: rgba(255, 115, 143, 0.35);
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.9),
+              0 0 0 2px rgba(255, 115, 143, 0.18),
+              0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
 .skin-box-header {
@@ -331,6 +453,10 @@ watch(
   align-items: center;
   justify-content: center;
   cursor: grab;
+  touch-action: pan-y;
+}
+
+.skin-box.is-live .canvas-container {
   touch-action: none;
 }
 
@@ -384,6 +510,11 @@ watch(
   color: var(--black-mute);
   pointer-events: none;
   transition: opacity 0.2s ease;
+  max-width: calc(100% - 16px);
+}
+
+.rotate-hint.is-touch {
+  font-size: 0.65rem;
 }
 
 .rotate-hint.is-active {
@@ -393,6 +524,7 @@ watch(
 .rotate-icon {
   width: 10px;
   height: 10px;
+  flex-shrink: 0;
 }
 
 .skin-loading {
@@ -416,6 +548,22 @@ watch(
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .skin-box {
+    height: auto;
+    aspect-ratio: 240 / 290;
+  }
+
+  .pedestal {
+    bottom: 12px;
+  }
+
+  .pedestal-plate {
+    width: 70px;
+    height: 12px;
   }
 }
 </style>

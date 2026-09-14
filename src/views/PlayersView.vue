@@ -238,11 +238,13 @@ onBeforeUnmount(() => {
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .content {
-    padding: 0 0.5rem 2.5rem;
+    padding: 0 0.75rem 2.5rem;
   }
+}
 
+@media (max-width: 480px) {
   .page-heading {
     font-size: 1.75rem;
   }
@@ -260,6 +262,7 @@ onBeforeUnmount(() => {
   .player-card {
     padding: 0.65rem;
     border-radius: 12px;
+    contain-intrinsic-size: auto 280px;
   }
 
   .player-username {
