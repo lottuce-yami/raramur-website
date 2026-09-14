@@ -1,8 +1,11 @@
 /**
- * Standalone utility to fetch UUIDs and Locator Bar Colors from NameMC
- * for all usernames defined in src/data/whitelist.json.
+ * Utility to fetch UUIDs and Locator Bar Colors from NameMC for all usernames
+ * defined in whitelist.json, and persist them to src/data/namemc-cache.json.
  *
- * Run with: node scripts/sync-namemc.mjs
+ * playerService.js reads that cache file at build/run time, so simply running
+ * this script and committing the resulting diff is enough to update the site.
+ *
+ * Run with: npm run sync-namemc
  */
 
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -15,15 +18,23 @@ const __dirname = dirname(__filename);
 const rootDir = join(__dirname, '..');
 
 const whitelistPath = join(rootDir, 'whitelist.json');
-const servicePath = join(rootDir, 'src/services/playerService.js');
+const cachePath = join(rootDir, 'src/data/namemc-cache.json');
 
 const whitelist = JSON.parse(readFileSync(whitelistPath, 'utf-8'));
 console.log(`Found ${whitelist.length} players in whitelist.json`);
 
+let cache = {};
+try {
+  cache = JSON.parse(readFileSync(cachePath, 'utf-8'));
+} catch {
+  console.log('No existing cache file found, starting fresh.');
+}
+
 const EDGE_PATH = "C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.exe";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36";
 
-const results = {};
+let updatedCount = 0;
+let failedCount = 0;
 
 for (const entry of whitelist) {
   const username = typeof entry === 'string' ? entry : entry.username;
@@ -39,7 +50,8 @@ for (const entry of whitelist) {
 
     const html = proc.stdout || '';
     if (!html.includes('Minecraft Profile')) {
-      console.log(`  -> Unregistered or custom username`);
+      console.log(`  -> Unregistered, custom username, or blocked request. Keeping existing cache entry.`);
+      failedCount++;
       continue;
     }
 
@@ -58,11 +70,18 @@ for (const entry of whitelist) {
 
     if (uuidMatch && colorMatch) {
       console.log(`  -> UUID: ${uuidMatch}, LocatorColor: ${colorMatch}`);
-      results[username] = { uuid: uuidMatch, locatorColor: colorMatch };
+      cache[username] = { uuid: uuidMatch, locatorColor: colorMatch };
+      updatedCount++;
+    } else {
+      console.log(`  -> Could not extract UUID/LocatorColor. Keeping existing cache entry.`);
+      failedCount++;
     }
   } catch (err) {
     console.error(`  -> Failed to check ${username}:`, err.message);
+    failedCount++;
   }
 }
 
-console.log('Finished querying NameMC. Results:', results);
+writeFileSync(cachePath, JSON.stringify(cache, null, 2) + '\n', 'utf-8');
+console.log(`\nSaved ${cachePath}`);
+console.log(`Updated ${updatedCount} player(s), ${failedCount} failed/skipped.`);
