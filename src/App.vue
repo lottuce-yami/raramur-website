@@ -28,4 +28,16 @@ import TheHeader from "@/components/TheHeader.vue";
 .page {
   padding: 4rem 8rem 0;
 }
+
+@media (max-width: 900px) {
+  .page {
+    padding: 4rem 1.5rem 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 4rem 1rem 0;
+  }
+}
 </style>

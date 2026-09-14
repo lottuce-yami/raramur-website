@@ -331,6 +331,7 @@ watch(
   align-items: center;
   justify-content: center;
   cursor: grab;
+  touch-action: none;
 }
 
 .canvas-container:active {

@@ -69,4 +69,30 @@ import TheServerStatus from "@/components/TheServerStatus.vue";
 .description strong {
   color: var(--color-accent-alt);
 }
+
+@media (max-width: 768px) {
+  .server-name h1 {
+    font-size: 4rem;
+  }
+
+  .server-name h2 {
+    font-size: 2rem;
+  }
+
+  .description {
+    padding: 0 0.5rem 2rem;
+    font-size: 1.15rem;
+    line-height: 1.55;
+  }
+}
+
+@media (max-width: 480px) {
+  .server-name h1 {
+    font-size: 2.75rem;
+  }
+
+  .description {
+    font-size: 1.05rem;
+  }
+}
 </style>

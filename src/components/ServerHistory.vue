@@ -431,4 +431,45 @@ onUnmounted(() => {
     font-size: 1.45rem;
   }
 }
+
+@media (max-width: 420px) {
+  .timeline-node {
+    left: -24px;
+    width: 18px;
+    height: 18px;
+    top: 22px;
+  }
+
+  .timeline-node-inner {
+    width: 10px;
+    height: 10px;
+    border-width: 2px;
+  }
+
+  .timeline-card {
+    padding: 1.25rem 1rem;
+    border-radius: 16px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .badge-version,
+  .badge-timespan {
+    font-size: 0.78rem;
+    padding: 0.15rem 0.55rem;
+  }
+
+  .save-link,
+  .save-unavailable {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  :slotted(.story) {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+}
 </style>

@@ -237,4 +237,33 @@ onBeforeUnmount(() => {
     gap: 1.5rem;
   }
 }
+
+@media (max-width: 480px) {
+  .content {
+    padding: 0 0.5rem 2.5rem;
+  }
+
+  .page-heading {
+    font-size: 1.75rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    text-align: left;
+  }
+
+  .players-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+
+  .player-card {
+    padding: 0.65rem;
+    border-radius: 12px;
+  }
+
+  .player-username {
+    font-size: 1rem;
+  }
+}
 </style>

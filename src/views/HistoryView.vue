@@ -466,8 +466,8 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.45);
   color: #ffffff;
   border-radius: 50%;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -525,6 +525,39 @@ onUnmounted(() => {
 
   .lightbox-overlay {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .content {
+    padding: 1.35rem 0.75rem 3.5rem;
+  }
+
+  .page-heading {
+    font-size: 1.75rem;
+  }
+
+  .contribute {
+    padding: 0.9rem 1rem;
+    font-size: 0.92rem;
+  }
+
+  .timeline-wrapper {
+    padding-left: 24px;
+  }
+
+  .timeline-spine {
+    left: 5px;
+  }
+
+  .year-badge {
+    left: -24px;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.85rem;
+  }
+
+  .lightbox-overlay {
+    padding: 0.5rem;
   }
 }
 </style>

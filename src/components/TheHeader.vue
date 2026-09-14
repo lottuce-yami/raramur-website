@@ -71,4 +71,43 @@ onUnmounted(() => {
 .router-link-active {
   color: var(--color-accent);
 }
+
+@media (max-width: 900px) {
+  .header {
+    padding: 1rem 1.5rem;
+  }
+
+  .header-menu {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 0.85rem 1.25rem;
+  }
+
+  .header-menu {
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .header-link {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+
+  .header-menu {
+    gap: 0.85rem;
+  }
+
+  .header-link {
+    font-size: 0.9rem;
+  }
+}
 </style>

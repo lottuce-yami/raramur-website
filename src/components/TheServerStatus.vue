@@ -49,7 +49,8 @@ onUnmounted(() => {
 <style scoped>
 .server-status {
   display: flex;
-  gap: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
   font-family: var(--font-alt);
 }
 
@@ -79,5 +80,12 @@ onUnmounted(() => {
 100% {
   transform: rotate(360deg);
 }
-} 
+}
+
+@media (max-width: 480px) {
+  .server-status {
+    gap: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
 </style>
