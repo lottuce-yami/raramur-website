@@ -1,6 +1,50 @@
+<script>
+// A single observer for the whole grid; posters are only rendered for cards
+// that are on screen or about to be.
+const pendingReveals = new WeakMap();
+let revealObserver = null;
+
+function revealOnce(el, callback) {
+  if (typeof IntersectionObserver === 'undefined') {
+    callback();
+    return () => {};
+  }
+
+  if (!revealObserver) {
+    revealObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          const handler = pendingReveals.get(entry.target);
+          revealObserver.unobserve(entry.target);
+          pendingReveals.delete(entry.target);
+          handler?.();
+        }
+      },
+      { rootMargin: '400px 0px' }
+    );
+  }
+
+  pendingReveals.set(el, callback);
+  revealObserver.observe(el);
+
+  return () => {
+    pendingReveals.delete(el);
+    revealObserver?.unobserve(el);
+  };
+}
+</script>
+
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
-import { SkinViewer } from 'skinview3d';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import {
+  lendStageTo,
+  renderPoster,
+  resetLentPose,
+  retainStage,
+  releaseStage,
+  returnStage
+} from '@/services/skinStage';
 
 const props = defineProps({
   username: {
@@ -21,118 +65,109 @@ const props = defineProps({
   }
 });
 
-const canvasRef = ref(null);
-const containerRef = ref(null);
+const canvasHostRef = ref(null);
 const isLoading = ref(true);
+const isLive = ref(false);
 const isRotating = ref(false);
-let skinViewer = null;
 
-function applyIsometricPose() {
-  if (!skinViewer) return;
+const posterUrl = ref(null);
 
-  // Camera and target scaled for larger 290px box:
-  // Character is prominently sized while keeping ample headroom below NameMC badge
-  skinViewer.controls.target.set(0, 2, 0);
-  skinViewer.camera.position.set(21, 5, 43);
-  skinViewer.controls.update();
+let stageToken = null;
+let posterRequest = 0;
+let hovering = false;
+let stopReveal = null;
 
-  // Natural Minecraft standing pose
-  const skin = skinViewer.playerObject.skin;
-  if (skin) {
-    skin.leftArm.rotation.x = -0.15;
-    skin.rightArm.rotation.x = 0.15;
-    skin.leftLeg.rotation.x = 0.12;
-    skin.rightLeg.rotation.x = -0.12;
-    skin.head.rotation.y = -0.2;
-    skin.head.rotation.x = 0.08;
+async function loadPoster() {
+  const request = ++posterRequest;
+  isLoading.value = true;
+
+  const url = await renderPoster(props.skinUrl, props.username);
+  if (request !== posterRequest) return;
+
+  posterUrl.value = url;
+  isLoading.value = false;
+}
+
+async function goLive() {
+  if (stageToken || !canvasHostRef.value) return;
+
+  const token = await lendStageTo(canvasHostRef.value, {
+    skinUrl: props.skinUrl,
+    username: props.username,
+    onRotateStart: () => {
+      isRotating.value = true;
+    },
+    onRotateEnd: () => {
+      isRotating.value = false;
+      if (!hovering) goStatic();
+    }
+  });
+
+  if (!token) return;
+
+  // The pointer may have moved on while the texture was still downloading.
+  if (!hovering) {
+    returnStage(token);
+    return;
   }
-  skinViewer.render();
+
+  stageToken = token;
+  isLive.value = true;
+}
+
+// The poster always holds the canonical pose, so handing the canvas back is all
+// it takes for the card to snap out of whatever angle the user left it at.
+function goStatic() {
+  if (!stageToken) return;
+
+  returnStage(stageToken);
+  stageToken = null;
+  isLive.value = false;
+  isRotating.value = false;
+}
+
+function onPointerEnter() {
+  hovering = true;
+  goLive();
+}
+
+function onPointerLeave() {
+  hovering = false;
+  // Releasing mid-drag would cancel the rotation; goStatic runs on rotate end.
+  if (isRotating.value) return;
+  goStatic();
 }
 
 function resetPose() {
-  applyIsometricPose();
-}
-
-async function initViewer() {
-  if (!canvasRef.value) return;
-
-  try {
-    isLoading.value = true;
-
-    // Dispose previous instance if any
-    if (skinViewer) {
-      skinViewer.dispose();
-      skinViewer = null;
-    }
-
-    // Initialize skin viewer with 240x290 dimensions
-    skinViewer = new SkinViewer({
-      canvas: canvasRef.value,
-      width: 240,
-      height: 290,
-      enableControls: true
-    });
-
-    // Make viewer background transparent so it blends with CSS container
-    skinViewer.background = null;
-    skinViewer.fov = 48;
-
-    // Load skin with fallback
-    try {
-      await skinViewer.loadSkin(props.skinUrl);
-    } catch (e) {
-      // Fallback to minotar or Steve skin
-      try {
-        await skinViewer.loadSkin(`https://minotar.net/skin/${props.username}`);
-      } catch (err2) {
-        await skinViewer.loadSkin('https://mc-heads.net/skin/MHF_Steve');
-      }
-    }
-
-    applyIsometricPose();
-
-    // Optimize render loop: only render on interaction (OrbitControls change)
-    skinViewer.renderPaused = true;
-    skinViewer.controls.addEventListener('change', () => {
-      if (skinViewer && !skinViewer.disposed) {
-        skinViewer.render();
-      }
-    });
-
-    skinViewer.controls.addEventListener('start', () => {
-      isRotating.value = true;
-    });
-
-    skinViewer.controls.addEventListener('end', () => {
-      isRotating.value = false;
-    });
-
-    isLoading.value = false;
-  } catch (err) {
-    console.error('Failed to initialize SkinViewer for', props.username, err);
-    isLoading.value = false;
-  }
+  if (stageToken) resetLentPose(stageToken);
 }
 
 onMounted(() => {
-  initViewer();
+  retainStage();
+  stopReveal = revealOnce(canvasHostRef.value, loadPoster);
 });
 
-onUnmounted(() => {
-  if (skinViewer) {
-    skinViewer.dispose();
-    skinViewer = null;
+onBeforeUnmount(() => {
+  stopReveal?.();
+  if (stageToken) returnStage(stageToken);
+  stageToken = null;
+  releaseStage();
+});
+
+watch(
+  () => props.skinUrl,
+  () => {
+    loadPoster();
+    if (stageToken) {
+      goStatic();
+      if (hovering) goLive();
+    }
   }
-});
-
-watch(() => props.skinUrl, () => {
-  initViewer();
-});
+);
 </script>
 
 <template>
   <div
-    ref="containerRef"
     class="skin-box"
     :style="{ '--locator-glow': locatorColor }"
     @dblclick="resetPose"
@@ -167,12 +202,25 @@ watch(() => props.skinUrl, () => {
       </button>
     </div>
 
-    <!-- 3D Skin Canvas -->
-    <div class="canvas-container">
+    <!-- Static render, swapped for the shared 3D canvas while hovered -->
+    <div
+      ref="canvasHostRef"
+      class="canvas-container"
+      @pointerenter="onPointerEnter"
+      @pointerleave="onPointerLeave"
+    >
       <div v-if="isLoading" class="skin-loading">
         <div class="skin-spinner"></div>
       </div>
-      <canvas ref="canvasRef" class="skin-canvas"></canvas>
+      <img
+        v-if="posterUrl"
+        :src="posterUrl"
+        :alt="`Скин игрока ${username}`"
+        class="skin-still"
+        :class="{ 'is-hidden': isLive }"
+        decoding="async"
+        draggable="false"
+      />
     </div>
 
     <!-- Pedestal Base (Minecraft isometric block feel) -->
@@ -223,7 +271,7 @@ watch(() => props.skinUrl, () => {
   align-items: center;
   gap: 3px;
   padding: 2px 7px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   font-size: 0.75rem;
@@ -231,8 +279,7 @@ watch(() => props.skinUrl, () => {
   font-weight: bold;
   color: var(--black-soft);
   text-decoration: none;
-  backdrop-filter: blur(4px);
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
 }
 
 .namemc-badge:hover {
@@ -255,13 +302,12 @@ watch(() => props.skinUrl, () => {
   justify-content: center;
   width: 22px;
   height: 22px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 6px;
   color: var(--black-mute);
   cursor: pointer;
-  backdrop-filter: blur(4px);
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   padding: 0;
 }
 
@@ -278,6 +324,7 @@ watch(() => props.skinUrl, () => {
 }
 
 .canvas-container {
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -290,11 +337,18 @@ watch(() => props.skinUrl, () => {
   cursor: grabbing;
 }
 
-.skin-canvas {
-  width: 100% !important;
-  height: 100% !important;
+.skin-still {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
-  display: block;
+  pointer-events: none;
+}
+
+/* The live canvas is stacked on top, so the still only needs hiding. */
+.skin-still.is-hidden {
+  visibility: hidden;
 }
 
 .pedestal {
@@ -321,14 +375,13 @@ watch(() => props.skinUrl, () => {
   align-items: center;
   gap: 3px;
   padding: 2px 6px;
-  background: rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.85);
   border: 1px solid rgba(0, 0, 0, 0.06);
   border-radius: 4px;
   font-size: 0.7rem;
   font-family: var(--font-brand);
   color: var(--black-mute);
   pointer-events: none;
-  backdrop-filter: blur(2px);
   transition: opacity 0.2s ease;
 }
 

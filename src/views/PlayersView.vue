@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
 import whitelist from '../../whitelist.json';
 import { getInitialPlayerData, resolvePlayerData } from '@/services/playerService';
 import PlayerSkinViewer from '@/components/PlayerSkinViewer.vue';
@@ -25,14 +25,36 @@ function copyUsername(username) {
   });
 }
 
+let cancelMetadataTask = null;
+let unmounted = false;
+
+async function resolveMissingMetadata() {
+  const unresolved = players.filter((player) => !player.uuid);
+
+  // Sequential on purpose: the grid is busy rendering skins, and these lookups
+  // only refine data that is already on screen.
+  for (const player of unresolved) {
+    const resolved = await resolvePlayerData(player.username);
+    if (unmounted) return;
+    Object.assign(player, resolved);
+  }
+}
+
 onMounted(() => {
-  // Asynchronously query live metadata for any players not fully resolved
-  players.forEach(async (player) => {
-    if (!player.uuid) {
-      const resolved = await resolvePlayerData(player.username);
-      Object.assign(player, resolved);
-    }
-  });
+  // Kept off the first-paint path; nothing visible is blocked by it.
+  if (typeof requestIdleCallback === 'function') {
+    const handle = requestIdleCallback(resolveMissingMetadata, { timeout: 2000 });
+    cancelMetadataTask = () => cancelIdleCallback(handle);
+  } else {
+    const handle = setTimeout(resolveMissingMetadata, 400);
+    cancelMetadataTask = () => clearTimeout(handle);
+  }
+});
+
+onBeforeUnmount(() => {
+  unmounted = true;
+  cancelMetadataTask?.();
+  if (copyTimeout) clearTimeout(copyTimeout);
 });
 </script>
 
@@ -153,6 +175,10 @@ onMounted(() => {
   border: 1px solid rgba(0, 0, 0, 0.06);
   padding: 0.85rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03), 0 6px 16px -4px rgba(0, 0, 0, 0.04);
+  /* Skips layout and paint for cards outside the viewport, which keeps
+     scrolling flat as the whitelist grows. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 356px;
 }
 
 .skin-wrapper {
