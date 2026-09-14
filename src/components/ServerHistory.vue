@@ -1,5 +1,7 @@
 <script setup>
-defineProps({
+import { onUnmounted, ref } from 'vue';
+
+const props = defineProps({
   /**
    * Full title of the server.
    * If nullish, fallbacks to "Raramur".
@@ -25,7 +27,39 @@ defineProps({
    * Link to the save file.
    * @example "https://example.com/raramur_example_1.21.4.zip"
    */
-  save: String
+  save: String,
+
+  /**
+   * World seed used to generate the server's map.
+   * If nullish, the seed is considered unknown.
+   * @example "1234567890", "raramur"
+   */
+  seed: [String, Number]
+});
+
+const seedCopied = ref(false);
+let seedCopiedTimeout = null;
+
+async function copySeed() {
+  if (props.seed === undefined || props.seed === null) {
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(String(props.seed));
+  } catch {
+    return;
+  }
+
+  seedCopied.value = true;
+  clearTimeout(seedCopiedTimeout);
+  seedCopiedTimeout = setTimeout(() => {
+    seedCopied.value = false;
+  }, 1500);
+}
+
+onUnmounted(() => {
+  clearTimeout(seedCopiedTimeout);
 });
 </script>
 
@@ -71,6 +105,25 @@ defineProps({
             </svg>
             Нет сохранения
           </span>
+
+          <button
+            v-if="seed !== undefined && seed !== null"
+            type="button"
+            class="seed-badge"
+            :title="seedCopied ? 'Сид скопирован!' : 'Скопировать сид'"
+            @click="copySeed"
+          >
+            <Transition name="seed-icon" mode="out-in">
+              <svg v-if="seedCopied" key="check" class="seed-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+              <svg v-else key="clipboard" class="seed-icon" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              </svg>
+            </Transition>
+            Сид: {{ seed }}
+          </button>
         </div>
       </header>
 
@@ -202,6 +255,7 @@ defineProps({
 .card-actions {
   display: flex;
   align-items: center;
+  gap: 0.6rem;
 }
 
 .save-link {
@@ -246,6 +300,54 @@ defineProps({
 
 .save-icon {
   flex-shrink: 0;
+}
+
+.seed-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 1rem;
+  background: rgba(0, 168, 107, 0.1);
+  border: 1px solid rgba(0, 168, 107, 0.28);
+  border-radius: 9999px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: inherit;
+  color: #008755;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.seed-badge:hover {
+  background: rgba(0, 168, 107, 0.18);
+  border-color: #00a86b;
+  color: #006842;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 168, 107, 0.18);
+}
+
+.seed-badge:active {
+  transform: translateY(0);
+}
+
+.seed-badge:focus-visible {
+  outline: 2px solid #00a86b;
+  outline-offset: 2px;
+}
+
+.seed-icon {
+  flex-shrink: 0;
+}
+
+.seed-icon-enter-active,
+.seed-icon-leave-active {
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.seed-icon-enter-from,
+.seed-icon-leave-to {
+  opacity: 0;
+  transform: scale(0.4);
 }
 
 .card-content {

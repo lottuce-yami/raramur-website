@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import ServerHistory from "@/components/ServerHistory.vue";
 import HistoryGallery from "@/components/HistoryGallery.vue";
@@ -55,6 +55,7 @@ onUnmounted(() => {
         name="Raramur Original"
         version="1.14.3"
         timespan="01.07.19 – 21.11.19"
+        seed="-415575943898109"
       >
         <section class="chapter">
           <p class="story">
