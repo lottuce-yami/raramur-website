@@ -1,14 +1,11 @@
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue';
+import { ref, onBeforeUnmount } from 'vue';
 import whitelist from '../../whitelist.json';
-import { getInitialPlayerData, resolvePlayerData } from '@/services/playerService';
+import { createPlayer } from '@/services/playerService';
 import PlayerSkinViewer from '@/components/PlayerSkinViewer.vue';
 import LocatorMark from '@/components/LocatorMark.vue';
 
-// Initialize reactive list of players from whitelist usernames
-const players = reactive(
-  whitelist.map(entry => getInitialPlayerData(typeof entry === 'string' ? entry : entry.username))
-);
+const players = whitelist.map(createPlayer);
 
 const copiedUser = ref(null);
 let copyTimeout = null;
@@ -25,35 +22,7 @@ function copyUsername(username) {
   });
 }
 
-let cancelMetadataTask = null;
-let unmounted = false;
-
-async function resolveMissingMetadata() {
-  const unresolved = players.filter((player) => !player.uuid);
-
-  // Sequential on purpose: the grid is busy rendering skins, and these lookups
-  // only refine data that is already on screen.
-  for (const player of unresolved) {
-    const resolved = await resolvePlayerData(player.username);
-    if (unmounted) return;
-    Object.assign(player, resolved);
-  }
-}
-
-onMounted(() => {
-  // Kept off the first-paint path; nothing visible is blocked by it.
-  if (typeof requestIdleCallback === 'function') {
-    const handle = requestIdleCallback(resolveMissingMetadata, { timeout: 2000 });
-    cancelMetadataTask = () => cancelIdleCallback(handle);
-  } else {
-    const handle = setTimeout(resolveMissingMetadata, 400);
-    cancelMetadataTask = () => clearTimeout(handle);
-  }
-});
-
 onBeforeUnmount(() => {
-  unmounted = true;
-  cancelMetadataTask?.();
   if (copyTimeout) clearTimeout(copyTimeout);
 });
 </script>
@@ -68,7 +37,7 @@ onBeforeUnmount(() => {
     <div class="players-grid">
       <article
         v-for="player in players"
-        :key="player.username"
+        :key="player.uuid"
         class="player-card"
       >
         <!-- 3D Isometric Skin Box -->

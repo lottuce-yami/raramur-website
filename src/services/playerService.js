@@ -1,11 +1,12 @@
 /**
- * Service to resolve player Minecraft UUIDs, skins, and locator-bar colors.
+ * Service to build player display data and Vanilla Java locator-bar colors.
  *
- * Locator colors match Java Edition / NameMC: UUID.hashCode() low 24 bits as
+ * Locator colors match Minecraft Java Edition: UUID.hashCode() low 24 bits as
  * RGB, then HSV brightness pinned to 0.9 (230/255).
  */
 
-const playerCache = new Map();
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Java's UUID.hashCode(): fold most/least significant bits into a 32-bit int.
@@ -78,31 +79,16 @@ function javaHsbToRgb(h, s, brightness) {
 }
 
 /**
- * Locator-bar color for a Java Edition UUID (NameMC / vanilla).
- * Falls back to a stable username-derived tint when no UUID is available yet.
+ * Vanilla Java Edition locator-bar color for a player UUID.
+ * Falls back to white when no valid UUID is available.
  */
-export function generateNameMCColor(seedString) {
-  const looksLikeUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(seedString);
-  let r;
-  let g;
-  let b;
-  if (looksLikeUuid) {
-    const hash = javaUuidHashCode(seedString);
-    r = (hash >> 16) & 0xff;
-    g = (hash >> 8) & 0xff;
-    b = hash & 0xff;
-  } else {
-    // Temporary stand-in until UUID resolves; not NameMC-accurate.
-    let hash = 0;
-    for (let i = 0; i < seedString.length; i++) {
-      hash = (hash << 5) - hash + seedString.charCodeAt(i);
-      hash |= 0;
-    }
-    hash = Math.abs(hash);
-    r = (hash >> 16) & 0xff;
-    g = (hash >> 8) & 0xff;
-    b = hash & 0xff;
-  }
+export function generateVanillaLocatorColor(uuid) {
+  if (!UUID_PATTERN.test(uuid ?? '')) return '#FFFFFF';
+
+  const hash = javaUuidHashCode(uuid);
+  const r = (hash >> 16) & 0xff;
+  const g = (hash >> 8) & 0xff;
+  const b = hash & 0xff;
 
   const [h, s] = javaRgbToHsb(r, g, b);
   const [nr, ng, nb] = javaHsbToRgb(h, s, 0.9);
@@ -111,59 +97,14 @@ export function generateNameMCColor(seedString) {
 }
 
 /**
- * Returns immediate synchronous defaults for player data while async lookup occurs.
+ * Builds display data for a whitelist entry that already includes a UUID.
  */
-export function getInitialPlayerData(username) {
-  if (playerCache.has(username)) {
-    return playerCache.get(username);
-  }
-
-  const initial = {
-    username,
-    uuid: null,
-    locatorColor: generateNameMCColor(username),
-    skinUrl: `https://mc-heads.net/skin/${encodeURIComponent(username)}`,
-    namemcUrl: `https://namemc.com/profile/${encodeURIComponent(username)}`,
-    loaded: false
+export function createPlayer({ name, uuid }) {
+  return {
+    username: name,
+    uuid,
+    locatorColor: generateVanillaLocatorColor(uuid),
+    skinUrl: `https://mc-heads.net/skin/${encodeURIComponent(uuid)}`,
+    namemcUrl: `https://namemc.com/profile/${encodeURIComponent(uuid)}`
   };
-
-  playerCache.set(username, initial);
-  return initial;
-}
-
-/**
- * Asynchronously resolves player UUID and recomputes the accurate locator color.
- */
-export async function resolvePlayerData(username) {
-  const existing = getInitialPlayerData(username);
-  if (existing.loaded && existing.uuid) {
-    return existing;
-  }
-
-  try {
-    // Attempt to query PlayerDB (open-CORS free Minecraft API)
-    const res = await fetch(`https://playerdb.co/api/player/minecraft/${encodeURIComponent(username)}`);
-    if (res.ok) {
-      const data = await res.json();
-      if (data.code === 'player.found' && data.data?.player) {
-        const player = data.data.player;
-        const uuid = player.id;
-        const resolved = {
-          ...existing,
-          uuid,
-          skinUrl: player.skin_texture || existing.skinUrl,
-          locatorColor: uuid ? generateNameMCColor(uuid) : existing.locatorColor,
-          loaded: true
-        };
-        playerCache.set(username, resolved);
-        return resolved;
-      }
-    }
-  } catch (err) {
-    console.warn(`Could not fetch live player data for ${username}:`, err);
-  }
-
-  // Mark as loaded with current values
-  existing.loaded = true;
-  return existing;
 }
