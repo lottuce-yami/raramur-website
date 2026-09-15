@@ -109,7 +109,7 @@ import TheServerStatus from "@/components/TheServerStatus.vue";
   }
 
   .server-name h1 {
-    font-size: 4rem;
+    font-size: 8rem;
   }
 
   .server-name h2 {
@@ -132,7 +132,7 @@ import TheServerStatus from "@/components/TheServerStatus.vue";
 
 @media (max-width: 480px) {
   .server-name h1 {
-    font-size: 2.75rem;
+    font-size: 3.75rem;
   }
 
   .description {
