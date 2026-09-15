@@ -136,7 +136,14 @@ onUnmounted(() => {
 
 <style scoped>
 .timeline-item {
-  position: relative;
+  --card-padding-block: 2rem;
+  --card-padding-inline: 2.35rem;
+  --card-border-width: 1px;
+  --card-title-size: 1.75rem;
+  --card-title-line-height: 1.25;
+
+  display: grid;
+  grid-template-columns: var(--timeline-gutter, 48px) minmax(0, 1fr);
   margin-bottom: 2.5rem;
 }
 
@@ -145,11 +152,18 @@ onUnmounted(() => {
 }
 
 .timeline-node {
-  position: absolute;
-  left: -48px;
-  top: 28px;
-  width: 24px;
-  height: 24px;
+  grid-column: 1;
+  justify-self: center;
+  align-self: start;
+  /* Keeps the dot on the optical centre of the title's first line. */
+  margin-top: calc(
+    var(--card-border-width)
+    + var(--card-padding-block)
+    + var(--card-title-size) * var(--card-title-line-height) / 2
+    - var(--timeline-node-size, 24px) / 2
+  );
+  width: var(--timeline-node-size, 24px);
+  height: var(--timeline-node-size, 24px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -173,10 +187,11 @@ onUnmounted(() => {
 }
 
 .timeline-card {
+  grid-column: 2;
   background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(255, 115, 143, 0.16);
+  border: var(--card-border-width) solid rgba(255, 115, 143, 0.16);
   border-radius: 20px;
-  padding: 2rem 2.35rem;
+  padding: var(--card-padding-block) var(--card-padding-inline);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.035), 0 1px 3px rgba(0, 0, 0, 0.02);
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -206,11 +221,11 @@ onUnmounted(() => {
 
 .card-title {
   font-family: var(--font-alt);
-  font-size: 1.75rem;
+  font-size: var(--card-title-size);
   font-weight: 700;
   color: var(--color-contrast);
   letter-spacing: -0.015em;
-  line-height: 1.25;
+  line-height: var(--card-title-line-height);
 }
 
 .card-badges {
@@ -409,8 +424,9 @@ onUnmounted(() => {
 }
 
 @media (max-width: 900px) {
-  .timeline-card {
-    padding: 1.6rem 1.35rem;
+  .timeline-item {
+    --card-padding-block: 1.6rem;
+    --card-padding-inline: 1.35rem;
   }
 
   :slotted(.chapter) {
@@ -420,11 +436,8 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .timeline-node {
-    left: -32px;
-    width: 20px;
-    height: 20px;
-    top: 24px;
+  .timeline-item {
+    --card-title-size: 1.45rem;
   }
 
   .timeline-node-inner {
@@ -437,24 +450,21 @@ onUnmounted(() => {
     flex-direction: column;
     align-items: flex-start;
   }
-
-  .card-title {
-    font-size: 1.45rem;
-  }
 }
 
 @media (max-width: 600px) {
+  .timeline-item {
+    --card-padding-block: 1.25rem;
+    --card-padding-inline: 1rem;
+    --card-title-size: 1.25rem;
+  }
+
   .timeline-node {
     display: none;
   }
 
   .timeline-card {
-    padding: 1.25rem 1rem;
     border-radius: 16px;
-  }
-
-  .card-title {
-    font-size: 1.25rem;
   }
 
   .card-actions {
