@@ -122,7 +122,7 @@ onUnmounted(() => {
                 <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
               </svg>
             </Transition>
-            Сид: {{ seed }}
+            <span class="seed-label">Сид: <span class="seed-value">{{ seed }}</span></span>
           </button>
         </div>
       </header>
@@ -255,6 +255,7 @@ onUnmounted(() => {
 .card-actions {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.6rem;
 }
 
@@ -270,6 +271,8 @@ onUnmounted(() => {
   font-weight: 600;
   color: #008755;
   text-decoration: none;
+  min-width: 0;
+  max-width: 100%;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
@@ -315,6 +318,8 @@ onUnmounted(() => {
   font-family: inherit;
   color: #008755;
   cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
   transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
@@ -337,6 +342,14 @@ onUnmounted(() => {
 
 .seed-icon {
   flex-shrink: 0;
+}
+
+.seed-label {
+  min-width: 0;
+}
+
+.seed-value {
+  overflow-wrap: anywhere;
 }
 
 .seed-icon-enter-active,
@@ -429,6 +442,45 @@ onUnmounted(() => {
 
   .card-title {
     font-size: 1.45rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .timeline-node {
+    display: none;
+  }
+
+  .timeline-card {
+    padding: 1.25rem 1rem;
+    border-radius: 16px;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+  }
+
+  .card-actions {
+    width: 100%;
+  }
+
+  .save-link,
+  .save-unavailable,
+  .seed-badge {
+    flex: 1 1 auto;
+    justify-content: center;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+  }
+
+  .badge-version,
+  .badge-timespan {
+    font-size: 0.78rem;
+    padding: 0.15rem 0.55rem;
+  }
+
+  :slotted(.story) {
+    font-size: 1rem;
+    line-height: 1.6;
   }
 }
 </style>

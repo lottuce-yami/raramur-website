@@ -85,8 +85,20 @@ onUnmounted(() => {
 .server-status {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
   font-family: var(--font-alt);
+}
+
+@media (max-width: 768px) {
+  .server-status {
+    justify-content: center;
+  }
+
+  .server-status-loading {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .server-status-online, .server-status-players-online {
@@ -163,5 +175,12 @@ onUnmounted(() => {
 100% {
   transform: rotate(360deg);
 }
-} 
+}
+
+@media (max-width: 480px) {
+  .server-status {
+    gap: 0.5rem 1.25rem;
+    font-size: 0.9rem;
+  }
+}
 </style>

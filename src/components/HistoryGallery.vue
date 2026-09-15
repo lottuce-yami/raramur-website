@@ -50,7 +50,7 @@ function handleOpen(url) {
   <VueperSlides
     class="history-gallery"
     :slide-ratio="9 / 16"
-    :touchable="false"
+    :touchable="true"
     :arrows="isMultiple"
     :bullets="isMultiple"
     :autoplay="isMultiple"
@@ -205,5 +205,25 @@ function handleOpen(url) {
 :deep(.vueperslides__inner),
 :deep(.vueperslide) {
   background: transparent;
+}
+
+@media (max-width: 480px) {
+  :deep(.vueperslides__arrow) {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+
+  :deep(.vueperslides__arrow--prev) {
+    left: 0.4rem;
+  }
+
+  :deep(.vueperslides__arrow--next) {
+    right: 0.4rem;
+  }
+
+  :deep(.vueperslides__arrow svg) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 }
 </style>

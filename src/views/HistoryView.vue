@@ -466,8 +466,8 @@ onUnmounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.45);
   color: #ffffff;
   border-radius: 50%;
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2.75rem;
+  height: 2.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -525,6 +525,53 @@ onUnmounted(() => {
 
   .lightbox-overlay {
     padding: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .content {
+    padding: 1.35rem 0.6rem 3.5rem;
+  }
+
+  .page-heading {
+    font-size: 1.75rem;
+  }
+
+  .contribute {
+    padding: 0.9rem 1rem;
+    font-size: 0.92rem;
+  }
+
+  .timeline-wrapper {
+    padding-left: 0;
+  }
+
+  .timeline-spine {
+    display: none;
+  }
+
+  .year-marker {
+    gap: 0.75rem;
+    margin: 2.5rem 0 1.75rem;
+  }
+
+  .year-marker::before,
+  .year-marker::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: rgba(255, 115, 143, 0.25);
+    border-radius: 999px;
+  }
+
+  .year-badge {
+    left: 0;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.85rem;
+  }
+
+  .lightbox-overlay {
+    padding: 0.5rem;
   }
 }
 </style>

@@ -68,6 +68,7 @@ function createViewer(SkinViewer) {
   canvas.style.display = 'block';
   canvas.style.objectFit = 'contain';
   canvas.style.cursor = 'grab';
+  canvas.style.touchAction = 'none';
 
   viewer.controls.addEventListener('change', () => {
     if (viewer && !viewer.disposed) viewer.render();
@@ -194,10 +195,21 @@ export function renderPoster(skinUrl, username) {
  * Moves the live canvas into `container`. Returns a token identifying the loan,
  * or null if another card claimed the stage first.
  */
-export async function lendStageTo(container, { skinUrl, username, onRotateStart, onRotateEnd } = {}) {
+export async function lendStageTo(container, { skinUrl, username, onRotateStart, onRotateEnd, onEvict } = {}) {
+  // Evict the previous holder so it can fall back to its poster before we
+  // reassign the shared canvas. Detach the canvas now so it does not sit on
+  // top of the old card during the upcoming texture download.
+  if (lentToken !== null) {
+    const prevHandlers = lentHandlers;
+    lentToken = null;
+    lentHandlers = null;
+    if (viewer) viewer.canvas.remove();
+    prevHandlers?.onEvict?.();
+  }
+
   const token = Symbol('skin-stage');
   lentToken = token;
-  lentHandlers = { onRotateStart, onRotateEnd };
+  lentHandlers = { onRotateStart, onRotateEnd, onEvict };
 
   if (runningJob) {
     await runningJob.catch(() => {});
