@@ -377,16 +377,19 @@ onUnmounted(() => {
 }
 
 .timeline-wrapper {
+  --timeline-gutter: 48px;
+  --timeline-node-size: 24px;
+  --timeline-spine-width: 3px;
+
   position: relative;
-  padding-left: 48px;
 }
 
 .timeline-spine {
   position: absolute;
-  left: 11px;
+  left: calc((var(--timeline-gutter) - var(--timeline-spine-width)) / 2);
   top: 15px;
   bottom: 25px;
-  width: 3px;
+  width: var(--timeline-spine-width);
   background: linear-gradient(
     to bottom,
     var(--color-accent) 0%,
@@ -409,7 +412,6 @@ onUnmounted(() => {
 
 .year-badge {
   position: relative;
-  left: -48px;
   background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-alt) 100%);
   color: #ffffff;
   font-family: var(--font-heading);
@@ -508,15 +510,11 @@ onUnmounted(() => {
   }
 
   .timeline-wrapper {
-    padding-left: 32px;
-  }
-
-  .timeline-spine {
-    left: 7px;
+    --timeline-gutter: 32px;
+    --timeline-node-size: 20px;
   }
 
   .year-badge {
-    left: -32px;
     font-size: 0.95rem;
     padding: 0.3rem 1rem;
   }
@@ -541,7 +539,7 @@ onUnmounted(() => {
   }
 
   .timeline-wrapper {
-    padding-left: 0;
+    --timeline-gutter: 0px;
   }
 
   .timeline-spine {
@@ -563,7 +561,6 @@ onUnmounted(() => {
   }
 
   .year-badge {
-    left: 0;
     font-size: 0.85rem;
     padding: 0.25rem 0.85rem;
   }
