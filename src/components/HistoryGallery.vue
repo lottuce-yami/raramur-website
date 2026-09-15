@@ -1,7 +1,8 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { VueperSlides, VueperSlide } from 'vueperslides';
 import 'vueperslides/dist/vueperslides.css';
+import { useInViewport } from '@/composables/useInViewport.js';
 
 const props = defineProps({
   /**
@@ -29,6 +30,34 @@ const props = defineProps({
 
 const emit = defineEmits(['open']);
 
+const { target, hasEntered, isVisible } = useInViewport();
+
+const slidesRef = ref(null);
+const activeIndex = ref(0);
+const showBackdrop = ref(true);
+
+/** @type {MediaQueryList | null} */
+let backdropMediaQuery = null;
+
+function syncBackdropPreference() {
+  showBackdrop.value = !(backdropMediaQuery?.matches ?? false);
+}
+
+onMounted(() => {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return;
+  }
+
+  backdropMediaQuery = window.matchMedia('(max-width: 768px)');
+  syncBackdropPreference();
+  backdropMediaQuery.addEventListener('change', syncBackdropPreference);
+});
+
+onUnmounted(() => {
+  backdropMediaQuery?.removeEventListener('change', syncBackdropPreference);
+  backdropMediaQuery = null;
+});
+
 const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 const images = computed(() => {
@@ -41,56 +70,136 @@ const images = computed(() => {
 
 const isMultiple = computed(() => props.count > 1);
 
+/**
+ * Indices of slides that should load their images (active +/- 1, wrapping).
+ * @param {number} index
+ */
+function shouldLoadImage(index) {
+  const count = props.count;
+  if (count <= 3) {
+    return true;
+  }
+
+  const active = activeIndex.value;
+  for (let offset = -1; offset <= 1; offset++) {
+    const wrapped = ((active + offset) % count + count) % count;
+    if (wrapped === index) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
+ * @param {{ currentSlide?: { index?: number } }} payload
+ */
+function handleSlide(payload) {
+  const index = payload?.currentSlide?.index;
+  if (typeof index === 'number') {
+    activeIndex.value = index;
+  }
+}
+
 function handleOpen(url) {
   emit('open', url);
 }
+
+watch(isVisible, (visible) => {
+  const slides = slidesRef.value;
+  if (!slides || !isMultiple.value) {
+    return;
+  }
+
+  if (visible) {
+    slides.resumeAutoplay?.();
+  } else {
+    slides.pauseAutoplay?.();
+  }
+});
+
+watch(hasEntered, (entered) => {
+  if (!entered || !isMultiple.value) {
+    return;
+  }
+
+  // Pause immediately after mount if the gallery is still off-screen.
+  queueMicrotask(() => {
+    const slides = slidesRef.value;
+    if (slides && !isVisible.value) {
+      slides.pauseAutoplay?.();
+    }
+  });
+});
 </script>
 
 <template>
-  <VueperSlides
-    class="history-gallery"
-    :slide-ratio="9 / 16"
-    :touchable="true"
-    :arrows="isMultiple"
-    :bullets="isMultiple"
-    :autoplay="isMultiple"
-    :duration="isMultiple ? 10000 : undefined"
+  <div
+    ref="target"
+    class="history-gallery-shell"
   >
-    <VueperSlide v-for="(url, index) in images" :key="index">
-      <template #content>
-        <button
-          type="button"
-          class="gallery-frame"
-          :aria-label="`Открыть скриншот ${index + 1}`"
-          @click="handleOpen(url)"
-        >
-          <img
-            class="gallery-backdrop"
-            :src="url"
-            alt=""
-            aria-hidden="true"
-            draggable="false"
-          />
-          <img
-            class="gallery-image"
-            :src="url"
-            :alt="`Скриншот ${folder} ${chapter}-${index + 1}`"
-            loading="lazy"
-            draggable="false"
-          />
-        </button>
-      </template>
-    </VueperSlide>
-  </VueperSlides>
+    <VueperSlides
+      v-if="hasEntered"
+      ref="slidesRef"
+      class="history-gallery"
+      :slide-ratio="9 / 16"
+      fixed-height
+      :touchable="true"
+      :arrows="isMultiple"
+      :bullets="isMultiple"
+      :autoplay="isMultiple"
+      :duration="isMultiple ? 10000 : undefined"
+      @slide="handleSlide"
+    >
+      <VueperSlide v-for="(url, index) in images" :key="index">
+        <template #content>
+          <button
+            type="button"
+            class="gallery-frame"
+            :aria-label="`Открыть скриншот ${index + 1}`"
+            @click="handleOpen(url)"
+          >
+            <img
+              v-if="showBackdrop && shouldLoadImage(index)"
+              class="gallery-backdrop"
+              :src="url"
+              alt=""
+              aria-hidden="true"
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
+            <img
+              v-if="shouldLoadImage(index)"
+              class="gallery-image"
+              :src="url"
+              :alt="`Скриншот ${folder} ${chapter}-${index + 1}`"
+              loading="lazy"
+              decoding="async"
+              draggable="false"
+            />
+          </button>
+        </template>
+      </VueperSlide>
+    </VueperSlides>
+  </div>
 </template>
 
 <style scoped>
-.history-gallery {
+.history-gallery-shell {
   width: 100%;
+  aspect-ratio: 16 / 9;
   border-radius: 14px;
   overflow: hidden;
   background: #181818;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.history-gallery {
+  width: 100%;
+  height: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #181818;
 }
 
 .gallery-frame {

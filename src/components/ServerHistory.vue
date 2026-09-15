@@ -174,8 +174,6 @@ onUnmounted(() => {
 
 .timeline-card {
   background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(255, 115, 143, 0.16);
   border-radius: 20px;
   padding: 2rem 2.35rem;

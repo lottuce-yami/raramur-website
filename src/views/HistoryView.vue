@@ -361,8 +361,6 @@ onUnmounted(() => {
   color: var(--black-soft);
   max-width: 980px;
   margin-bottom: 0;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
 }
 
 .contribute a {
