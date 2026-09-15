@@ -79,7 +79,7 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .content {
-  background-color: var(--color-main);
+  background-color: transparent;
   padding: 0 2rem 4rem;
   animation: fadeIn 0.4s ease-in-out;
 }
