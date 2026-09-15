@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import {RouterLink, useRoute} from "vue-router";
 import {onMounted, onUnmounted, ref} from "vue";
 
@@ -27,6 +27,9 @@ onUnmounted(() => {
       <li class="header-menu-item">
         <RouterLink class="header-link" to="/history">История</RouterLink>
       </li>
+      <li class="header-menu-item">
+        <RouterLink class="header-link" to="/players">Игроки</RouterLink>
+      </li>
     </menu>
   </header>
 </template>
@@ -44,7 +47,7 @@ onUnmounted(() => {
 
 .header-transparent {
   background-color: transparent;
-  backdrop-filter: blur(10);
+  backdrop-filter: blur(10px);
 }
 
 .header-scrolled {
@@ -54,7 +57,7 @@ onUnmounted(() => {
 
 .header-menu {
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: flex-end;
   gap: 4rem;
   list-style: none;
 }
@@ -67,5 +70,44 @@ onUnmounted(() => {
 
 .router-link-active {
   color: var(--color-accent);
+}
+
+@media (max-width: 900px) {
+  .header {
+    padding: 1rem 1.5rem;
+  }
+
+  .header-menu {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    padding: 0.85rem 1.25rem;
+  }
+
+  .header-menu {
+    justify-content: center;
+    gap: 1.25rem;
+  }
+
+  .header-link {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .header {
+    padding: 0.75rem 1rem;
+  }
+
+  .header-menu {
+    gap: 0.85rem;
+  }
+
+  .header-link {
+    font-size: 0.9rem;
+  }
 }
 </style>
