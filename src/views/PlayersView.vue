@@ -5,12 +5,7 @@ import { createPlayer } from '@/services/playerService';
 import PlayerSkinViewer from '@/components/PlayerSkinViewer.vue';
 import LocatorMark from '@/components/LocatorMark.vue';
 
-const players = ref([]);
-let loadCancelled = false;
-
-Promise.all(whitelist.map(createPlayer)).then((list) => {
-  if (!loadCancelled) players.value = list;
-});
+const players = whitelist.map(createPlayer);
 
 const copiedUser = ref(null);
 let copyTimeout = null;
@@ -28,7 +23,6 @@ function copyUsername(username) {
 }
 
 onBeforeUnmount(() => {
-  loadCancelled = true;
   if (copyTimeout) clearTimeout(copyTimeout);
 });
 </script>

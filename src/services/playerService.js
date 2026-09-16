@@ -78,35 +78,6 @@ function javaHsbToRgb(h, s, brightness) {
   return [r, g, b];
 }
 
-const CORS_PROXY = 'http://lottuce.moe:6767/';
-
-/**
- * Fetches the skin URL for a given UUID.
- */
-function fetchSkinUrl(uuid) {
-  const id = String(uuid).replace(/-/g, '');
-  const skinDataUrl = `https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(id)}`;
-  return fetch(`${CORS_PROXY}${skinDataUrl}`)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch skin URL for UUID: ${uuid}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const texturesProp = data.properties?.find((p) => p.name === 'textures');
-      if (!texturesProp?.value) {
-        throw new Error(`No skin found for UUID: ${uuid}`);
-      }
-      const decoded = JSON.parse(atob(texturesProp.value));
-      const url = decoded.textures?.SKIN?.url;
-      if (!url) {
-        throw new Error(`No skin found for UUID: ${uuid}`);
-      }
-      return url;
-    });
-}
-
 /**
  * Vanilla Java Edition locator-bar color for a player UUID.
  * Falls back to white when no valid UUID is available.
@@ -128,12 +99,12 @@ export function generateVanillaLocatorColor(uuid) {
 /**
  * Builds display data for a whitelist entry that already includes a UUID.
  */
-export async function createPlayer({ name, uuid }) {
+export function createPlayer({ name, uuid }) {
   return {
     username: name,
     uuid,
     locatorColor: generateVanillaLocatorColor(uuid),
-    skinUrl: await fetchSkinUrl(uuid).catch(() => ''),
+    skinUrl: `https://mc-heads.net/skin/${encodeURIComponent(uuid)}`,
     namemcUrl: `https://namemc.com/profile/${encodeURIComponent(uuid)}`
   };
 }
