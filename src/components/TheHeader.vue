@@ -37,7 +37,7 @@ onUnmounted(() => {
 <style scoped>
 .header {
   position: fixed;
-  z-index: 4;
+  z-index: 5;
   width: 100%;
   padding: 1rem 8rem;
   font-family: var(--font-heading);
