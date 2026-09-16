@@ -1,31 +1,38 @@
 ﻿<script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref } from 'vue';
 import ServerHistory from "@/components/ServerHistory.vue";
 import HistoryGallery from "@/components/HistoryGallery.vue";
+import ImageLightbox from "@/components/ImageLightbox.vue";
 
-const activeImage = ref(null);
+/** @type {import('vue').Ref<{ images: string[], index: number } | null>} */
+const lightbox = ref(null);
 
-function openImage(url) {
-  activeImage.value = url;
+/**
+ * @param {{ url: string, images: string[], index: number }} payload
+ */
+function openImage(payload) {
+  lightbox.value = {
+    images: payload.images,
+    index: payload.index
+  };
 }
 
 function closeImage() {
-  activeImage.value = null;
+  lightbox.value = null;
 }
 
-function handleKeyDown(e) {
-  if (e.key === 'Escape') {
-    closeImage();
+/**
+ * @param {number} index
+ */
+function setLightboxIndex(index) {
+  if (!lightbox.value) {
+    return;
   }
+  lightbox.value = {
+    images: lightbox.value.images,
+    index
+  };
 }
-
-onMounted(() => {
-  window.addEventListener('keydown', handleKeyDown);
-});
-
-onUnmounted(() => {
-  window.removeEventListener('keydown', handleKeyDown);
-});
 </script>
 
 <template>
@@ -296,21 +303,13 @@ onUnmounted(() => {
       </ServerHistory>
     </div>
 
-    <Teleport to="body">
-      <Transition name="lightbox-fade">
-        <div v-if="activeImage" class="lightbox-overlay" @click="closeImage">
-          <div class="lightbox-container" @click.stop>
-            <button class="lightbox-close-btn" aria-label="Закрыть" @click="closeImage">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-              </svg>
-            </button>
-            <img :src="activeImage" class="lightbox-img" alt="Скриншот в полном размере" />
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <ImageLightbox
+      v-if="lightbox"
+      :images="lightbox.images"
+      :index="lightbox.index"
+      @update:index="setLightboxIndex"
+      @close="closeImage"
+    />
   </div>
 </template>
 
@@ -426,75 +425,6 @@ onUnmounted(() => {
   z-index: 3;
 }
 
-.lightbox-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  background: rgba(10, 10, 10, 0.9);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-}
-
-.lightbox-container {
-  position: relative;
-  max-width: 95vw;
-  max-height: 92vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lightbox-img {
-  max-width: 95vw;
-  max-height: 90vh;
-  object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.7);
-  user-select: none;
-}
-
-.lightbox-close-btn {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.75rem;
-  z-index: 2;
-  background: rgba(20, 20, 20, 0.64);
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  color: #ffffff;
-  border-radius: 50%;
-  width: 2.75rem;
-  height: 2.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.lightbox-close-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(1.1);
-}
-
-.lightbox-close-btn:focus-visible {
-  outline: 2px solid #ffffff;
-  outline-offset: 2px;
-}
-
-.lightbox-fade-enter-active,
-.lightbox-fade-leave-active {
-  transition: opacity 0.25s ease;
-}
-
-.lightbox-fade-enter-from,
-.lightbox-fade-leave-to {
-  opacity: 0;
-}
-
 @media (max-width: 768px) {
   .content {
     padding: 1.75rem 1.15rem 4rem;
@@ -517,10 +447,6 @@ onUnmounted(() => {
   .year-badge {
     font-size: 0.95rem;
     padding: 0.3rem 1rem;
-  }
-
-  .lightbox-overlay {
-    padding: 1rem;
   }
 }
 
@@ -563,10 +489,6 @@ onUnmounted(() => {
   .year-badge {
     font-size: 0.85rem;
     padding: 0.25rem 0.85rem;
-  }
-
-  .lightbox-overlay {
-    padding: 0.5rem;
   }
 }
 </style>
