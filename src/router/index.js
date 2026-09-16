@@ -22,4 +22,26 @@ const router = createRouter({
   ]
 });
 
+function isChunkLoadError(error) {
+  const message = error?.message || String(error);
+  return (
+    /loading dynamically imported module/i.test(message) ||
+    /Failed to fetch dynamically imported module/i.test(message) ||
+    /Importing a module script failed/i.test(message) ||
+    error?.name === 'ChunkLoadError'
+  );
+}
+
+// After a redeploy, old hashed chunks 404. Force a full load of the new build.
+router.onError((error, to) => {
+  if (!isChunkLoadError(error)) return;
+
+  const reloadKey = 'chunk-reload';
+  const lastReload = Number(sessionStorage.getItem(reloadKey) || 0);
+  if (Date.now() - lastReload < 10000) return;
+
+  sessionStorage.setItem(reloadKey, String(Date.now()));
+  window.location.assign(to.href);
+});
+
 export default router;
