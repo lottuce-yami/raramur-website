@@ -79,26 +79,6 @@ function javaHsbToRgb(h, s, brightness) {
 }
 
 /**
- * Fetches the skin URL for a given UUID.
- */
-function fetchSkinUrl(uuid) {
-  const skinDataUrl = `https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(uuid)}`;
-  return fetch(skinDataUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`Failed to fetch skin URL for UUID: ${uuid}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      if (!data.textures || !data.textures.SKIN) {
-        throw new Error(`No skin found for UUID: ${uuid}`);
-      }
-      return data.textures.SKIN.url;
-    });
-}
-
-/**
  * Vanilla Java Edition locator-bar color for a player UUID.
  * Falls back to white when no valid UUID is available.
  */
@@ -124,7 +104,7 @@ export function createPlayer({ name, uuid }) {
     username: name,
     uuid,
     locatorColor: generateVanillaLocatorColor(uuid),
-    skinUrl: fetchSkinUrl(uuid).catch(() => null), // Return null if skin fetch fails
+    skinUrl: `https://mc-heads.net/skin/${encodeURIComponent(uuid)}`,
     namemcUrl: `https://namemc.com/profile/${encodeURIComponent(uuid)}`
   };
 }
