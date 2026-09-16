@@ -100,8 +100,16 @@ function handleSlide(payload) {
   }
 }
 
-function handleOpen(url) {
-  emit('open', url);
+/**
+ * @param {string} url
+ * @param {number} index
+ */
+function handleOpen(url, index) {
+  emit('open', {
+    url,
+    images: images.value,
+    index
+  });
 }
 
 watch(isVisible, (visible) => {
@@ -156,7 +164,7 @@ watch(hasEntered, (entered) => {
             type="button"
             class="gallery-frame"
             :aria-label="`Открыть скриншот ${index + 1}`"
-            @click="handleOpen(url)"
+            @click="handleOpen(url, index)"
           >
             <img
               v-if="showBackdrop && shouldLoadImage(index)"
