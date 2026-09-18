@@ -300,17 +300,6 @@ watch(
           <path d="M2.5 9.5L9.5 2.5M9.5 2.5H4.5M9.5 2.5V7.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
       </a>
-      <button
-        type="button"
-        class="reset-btn"
-        title="Сбросить ракурс 3D"
-        @click.stop="resetPose"
-      >
-        <svg viewBox="0 0 16 16" fill="currentColor" class="reset-icon">
-          <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2v1z"/>
-          <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"/>
-        </svg>
-      </button>
     </div>
 
     <!-- Static render, swapped for the shared 3D canvas while hovered / tapped -->
@@ -415,34 +404,6 @@ watch(
 .external-icon {
   width: 9px;
   height: 9px;
-}
-
-.reset-btn {
-  pointer-events: auto;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 6px;
-  color: var(--black-mute);
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
-  padding: 0;
-}
-
-.reset-btn:hover {
-  background: #fff;
-  color: var(--color-accent);
-  border-color: var(--color-accent);
-  transform: rotate(-30deg);
-}
-
-.reset-icon {
-  width: 12px;
-  height: 12px;
 }
 
 .canvas-container {
