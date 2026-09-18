@@ -78,15 +78,15 @@ function javaHsbToRgb(h, s, brightness) {
   return [r, g, b];
 }
 
-const CORS_PROXY = 'http://lottuce.moe:6767/';
+const CORS_PROXY = 'https://lottuce.moe:6767/';
 
 /**
  * Fetches the skin URL for a given UUID.
  */
 function fetchSkinUrl(uuid) {
   const id = String(uuid).replace(/-/g, '');
-  const skinDataUrl = `https://sessionserver.mojang.com/session/minecraft/profile/${encodeURIComponent(id)}`;
-  return fetch(`${CORS_PROXY}${skinDataUrl}`)
+  const skinDataUrlPath = `session/minecraft/profile/${encodeURIComponent(id)}`;
+  return fetch(`${CORS_PROXY}${skinDataUrlPath}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`Failed to fetch skin URL for UUID: ${uuid}`);
